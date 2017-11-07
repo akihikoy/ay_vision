@@ -1,0 +1,9 @@
+<launch>
+  <node type="visual_skin_node" pkg="ay_vision" name="visual_skin_node_ay1" output="screen">
+    <param name="pkg_dir" value="$(find ay_vision)/" />
+    <param name="cam_config" value="config/usbcam2fay11.yaml" />
+    <param name="stereo_config" value="config/usbcam2fay11.yaml" />
+    <param name="blobtrack_config" value="config/usbcam2fay11.yaml" />
+    <param name="blob_calib_prefix" value="data_gen/blob_" />
+  </node>
+</launch>

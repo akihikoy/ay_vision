@@ -1,0 +1,17 @@
+%YAML:1.0
+ObjectDetector:
+  -
+    #For white detector:
+    WhiteSMax: 30
+    WhiteVMin: 60
+    NErode1: 1
+    NDilate1: 1
+
+    #For objects-on-white detector:
+    ThreshS: 61
+    ThreshV: 147
+    NErode2: 1
+    NDilate2: 2
+    RectLenMin: 40
+    RectLenMax: 400
+    ContourApproxEps: 1.5  # Contour approximation. If zero, no approximation.

@@ -1,0 +1,33 @@
+<package>
+  <description brief="ay_vision">
+
+     ay_vision
+
+  </description>
+  <author>Akihiko Yamaguchi</author>
+  <license>Not decided</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://akihikoy.net</url>
+  <depend package="ay_vision_msgs"/>
+  <depend package="ay_cpp"/>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+  <depend package="std_srvs"/>
+  <depend package="sensor_msgs"/>
+  <!--<depend package="cv_bridge"/>-->
+    <!--NOTE: Do not put cv_bridge here
+    since we want to use not standard version of opencv.
+    If we put cv_bridge as a dependency here,
+    both opencv 2.4.8 and 2.4.13 will be linked simultaneously,
+    which causes a compile issue.-->
+
+  <depend package="image_transport"/>
+  <depend package="camera_info_manager"/>
+
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib"/>
+  </export>
+
+</package>
+
+

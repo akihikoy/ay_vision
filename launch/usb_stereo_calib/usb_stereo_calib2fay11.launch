@@ -1,0 +1,16 @@
+<launch>
+  <node name="cv_usb_node" pkg="ay_vision" type="cv_usb_node"
+        args="$(find ay_vision)/config/usbcam2fay11.yaml" />
+
+  <!--USE SMALL CALIB BOARD-->
+<!--   <node name="cameracalibrator" pkg="ay_vision" type="cameracalibrator.py" -->
+  <node name="cameracalibrator" pkg="camera_calibration" type="cameracalibrator.py"
+    output="screen"
+    args="--size 6x4 --square 0.0191 --approximate=0.1 -c ''
+    left:=/cv_usb_node/usbcam2fay11_l/image_raw
+    right:=/cv_usb_node/usbcam2fay11_r/image_raw
+    left_camera:=/cv_usb_node/usbcam2fay11_l
+    right_camera:=/cv_usb_node/usbcam2fay11_r
+    " />
+
+</launch>

@@ -1,0 +1,20 @@
+<launch>
+  <node type="visual_skin_node2" pkg="ay_vision" name="visual_skin_node_ay10l" output="screen">
+    <param name="pkg_dir" value="$(find ay_vision)/" />
+    <param name="cam_config" value="config/usbcam2fay10a_l.yaml" />
+    <param name="stereo_config" value="config/usbcam2fay10a_l.yaml" />
+    <param name="blobtrack_config" value="config/usbcam2fay10a_l.yaml" />
+    <param name="objdettrack_config" value="config/usbcam2fay10a_l.yaml" />
+    <param name="blob_calib_prefix" value="data_gen/blob_" />
+    <param name="frame_skip" value="0" />
+  </node>
+  <node type="visual_skin_node2" pkg="ay_vision" name="visual_skin_node_ay10r" output="screen">
+    <param name="pkg_dir" value="$(find ay_vision)/" />
+    <param name="cam_config" value="config/usbcam2fay10a_r.yaml" />
+    <param name="stereo_config" value="config/usbcam2fay10a_r.yaml" />
+    <param name="blobtrack_config" value="config/usbcam2fay10a_r.yaml" />
+    <param name="objdettrack_config" value="config/usbcam2fay10a_r.yaml" />
+    <param name="blob_calib_prefix" value="data_gen/blob_" />
+    <param name="frame_skip" value="0" />
+  </node>
+</launch>
