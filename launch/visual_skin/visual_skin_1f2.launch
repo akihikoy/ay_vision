@@ -7,6 +7,6 @@
     <param name="blobtrack_config" value="config/usbcam1f2.yaml" />
     <param name="objdettrack_config" value="config/usbcam1f2.yaml" />
     <param name="blob_calib_prefix" value="data_gen/blob_" />
-    <param name="frame_skip" value="1" />
+    <param name="frame_skip" value="0" />
   </node>
 </launch>
