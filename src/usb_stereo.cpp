@@ -137,6 +137,8 @@ void TStereo::Init()
   }
   else if(sp_.LensType==TStereoParams::ltFisheye)
   {
+#if CV_MAJOR_VERSION>2 || (CV_MAJOR_VERSION==2 && (CV_MINOR_VERSION>4 || (CV_MINOR_VERSION==4 && CV_SUBMINOR_VERSION>=13)))
+    // This code is compiled only when OpenCV >= 2.4.13
     cv::fisheye::stereoRectify(cp_.K1, cp_.D1, cp_.K2, cp_.D2, img_size_in_, cp_.R, cp_.T.t(),
         cp_.R1, cp_.R2, cp_.P1, cp_.P2, cp_.Q,
         /*flags=*/cv::CALIB_ZERO_DISPARITY, img_size_out_,
@@ -144,6 +146,10 @@ void TStereo::Init()
         // FIXME: balance, fov_scale are important to be tuned!!!
     cv::fisheye::initUndistortRectifyMap(cp_.K1, cp_.D1, cp_.R1, cp_.P1, img_size_out_, CV_16SC2, map11_, map12_);
     cv::fisheye::initUndistortRectifyMap(cp_.K2, cp_.D2, cp_.R2, cp_.P2, img_size_out_, CV_16SC2, map21_, map22_);
+#else
+    std::cerr<<"LensType==TStereoParams::ltFisheye is not available with OpenCV<2.4.13"<<std::endl;
+    throw;
+#endif
   }
   std::cerr<<"cp_.Q="<<cp_.Q<<std::endl;
   std::cerr<<"cp_.P1="<<cp_.P1<<std::endl;
