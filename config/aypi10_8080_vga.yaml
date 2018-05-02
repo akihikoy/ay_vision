@@ -1,0 +1,7 @@
+%YAML:1.0
+CameraInfo:
+  -
+    Name: aypi10_8080
+    DevID: "http://aypi10:8080/?action=stream&dummy=file.mjpg"
+    PixelFormat: MJPG
+    NRotate90: 0

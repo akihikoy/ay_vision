@@ -7,13 +7,14 @@
     \date    Feb.19, 2017
     \version 0.2
     \date    Feb.19, 2017
-             Removed stereo vision (independent from PCL; not point cloud output).
+             Removed stereo vision (independent from PCL; no point cloud output).
 */
 //-------------------------------------------------------------------------------------------
 #include "ay_vision/blob_tracker2.h"
 #include "ay_vision/prox_vision.h"
 #include "ay_vision/vision_util.h"
 #include "ay_cpp/geom_util.h"
+#include "ay_cpp/sys_util.h"
 #ifdef WITH_STEREO
   #include "ay_vision/usb_stereo.h"
   #include "ay_3dvision/pcl_util.h"

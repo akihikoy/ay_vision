@@ -8,6 +8,7 @@
 //-------------------------------------------------------------------------------------------
 #include "ay_vision/segm_obj.h"
 #include "ay_vision/vision_util.h"
+#include "viz_util.h"
 //-------------------------------------------------------------------------------------------
 #include "ay_vision_msgs/SegmObj.h"
 #include "ay_vision_msgs/ColDetViz.h"
@@ -56,45 +57,6 @@ void OnMouse(int event, int x, int y, int flags, void *data)
   }
   if(event == cv::EVENT_LBUTTONDOWN)
   {
-  }
-}
-//-------------------------------------------------------------------------------------------
-
-void DrawColDetViz(cv::Mat &img, const std::vector<ay_vision_msgs::ColDetVizPrimitive> &objects)
-{
-  for(std::vector<ay_vision_msgs::ColDetVizPrimitive>::const_iterator itr(objects.begin()),itr_end(objects.end());
-      itr!=itr_end; ++itr)
-  {
-    cv::Scalar col= CV_RGB(itr->color.r,itr->color.g,itr->color.b);
-    const double &lw= itr->line_width;
-    std::vector<std::vector<cv::Point> >  points(1);
-    switch(itr->type)
-    {
-    case ay_vision_msgs::ColDetVizPrimitive::LINE :
-      cv::line(img, cv::Point2d(itr->param[0],itr->param[1]), cv::Point2d(itr->param[2],itr->param[3]), col, lw);
-      break;
-    case ay_vision_msgs::ColDetVizPrimitive::CIRCLE :
-      cv::circle(img, cv::Point2d(itr->param[0],itr->param[1]), itr->param[2], col, lw);
-      break;
-    case ay_vision_msgs::ColDetVizPrimitive::RECTANGLE :
-      cv::rectangle(img, cv::Rect(itr->param[0],itr->param[1],itr->param[2],itr->param[3]), col, lw);
-      break;
-    case ay_vision_msgs::ColDetVizPrimitive::POLYGON :
-      points[0].resize(itr->param.size()/2);
-      for(int i(0),i_end(itr->param.size()/2); i<i_end; ++i)
-        points[0][i]= cv::Point(itr->param[2*i],itr->param[2*i+1]);
-      cv::polylines(img, points, /*isClosed=*/false, col, lw);
-      break;
-    case ay_vision_msgs::ColDetVizPrimitive::FILLED_POLY :
-      points[0].resize(itr->param.size()/2);
-      for(int i(0),i_end(itr->param.size()/2); i<i_end; ++i)
-        points[0][i]= cv::Point(itr->param[2*i],itr->param[2*i+1]);
-      cv::fillPoly(img, points, col);
-      break;
-    default:
-      std::cerr<<"Unknown type:"<<itr->type<<std::endl;
-      return;
-    }
   }
 }
 //-------------------------------------------------------------------------------------------

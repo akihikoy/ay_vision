@@ -13,12 +13,6 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <string>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <cstdlib>  // strtol, atol
-#include <inttypes.h>  // int64_t
-#include <sys/time.h>  // gettimeofday
 //-------------------------------------------------------------------------------------------
 namespace cv
 {
@@ -28,6 +22,20 @@ void write(cv::FileStorage &fs, const std::string&, const cv::KeyPoint &x);
 void read(const cv::FileNode &data, cv::KeyPoint &x, const cv::KeyPoint &default_value=cv::KeyPoint());
 // void write(cv::FileStorage &fs, const std::string&, const cv::SimpleBlobDetector::Params &x);
 // void read(const cv::FileNode &data, cv::SimpleBlobDetector::Params &x, const cv::SimpleBlobDetector::Params &default_value=cv::SimpleBlobDetector::Params());
+
+// For saving vector of vector.
+template<typename T>
+void write(cv::FileStorage &fs, const std::string&, const std::vector<std::vector<T> > &x)
+{
+  fs<<"[";
+  for(typename std::vector<std::vector<T> >::const_iterator itr(x.begin()),end(x.end());itr!=end;++itr)
+  {
+    fs<<*itr;
+  }
+  fs<<"]";
+}
+//-------------------------------------------------------------------------------------------
+
 }  // namespace cv
 //-------------------------------------------------------------------------------------------
 namespace trick
@@ -41,54 +49,15 @@ inline float Dist(const cv::Point2f &p, const cv::Point2f &q)
 }
 //-------------------------------------------------------------------------------------------
 
-inline std::string ToString(const std::string &prefix, int num, const std::string &posix="")
+// cv::absdiff with mask: res=abs(a-b)
+inline void absdiff(const cv::Mat &a, const cv::Mat &b, cv::Mat &res, cv::InputArray mask=cv::noArray(), int dtype=-1)
 {
-  std::stringstream ss;
-  ss<<prefix<<num<<posix;
-  return ss.str();
-}
-//-------------------------------------------------------------------------------------------
-
-inline bool IsInt(const std::string &s)
-{
-  if(s.empty() || std::isspace(s[0]))  return false;
-  char *p;
-  strtol(s.c_str(), &p, 10);
-  return (*p == 0);
-}
-//-------------------------------------------------------------------------------------------
-
-inline int ToInt(const std::string &s)
-{
-  return atol(s.c_str());
-}
-//-------------------------------------------------------------------------------------------
-
-inline double GetCurrentTime(void)
-{
-  struct timeval time;
-  gettimeofday (&time, NULL);
-  return static_cast<double>(time.tv_sec) + static_cast<double>(time.tv_usec)*1.0e-6;
-  // return ros::Time::now().toSec();
-}
-//-------------------------------------------------------------------------------------------
-
-inline int64_t GetCurrentTimeL(void)
-{
-  struct timeval time;
-  gettimeofday (&time, NULL);
-  return time.tv_sec*1e6l + time.tv_usec;
-}
-//-------------------------------------------------------------------------------------------
-
-/*! \brief check the filename exists */
-inline bool FileExists(const std::string &filename)
-{
-  bool res(false);
-  std::ifstream ifs (filename.c_str());
-  res = ifs.is_open();
-  ifs.close();
-  return res;
+  cv::Mat aa,bb,cc;
+  a.convertTo(aa, CV_16SC3);
+  b.convertTo(bb, CV_16SC3);
+  cv::subtract(aa, bb, cc, mask, dtype);
+  cc= cv::abs(cc);
+  cc.convertTo(res, a.type());
 }
 //-------------------------------------------------------------------------------------------
 

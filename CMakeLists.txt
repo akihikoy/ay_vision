@@ -93,6 +93,9 @@ rosbuild_add_library(ayv_usb_stereo
 target_link_libraries(ayv_usb_stereo
       ${OpenCV_LIBRARIES}
       )
+target_link_libraries(ayv_prox_vision
+      ${OpenCV_LIBRARIES}
+      )
 rosbuild_add_library(ay_vision
       src/vision_util.cpp
       )
@@ -146,6 +149,7 @@ target_link_libraries(disp_rostime
 
 rosbuild_add_executable(segm_obj_node
       src_ros/segm_obj_node.cpp
+      src_ros/viz_util.cpp
       )
 target_link_libraries(segm_obj_node
       ayv_segm_obj
@@ -163,5 +167,3 @@ target_link_libraries(visual_skin_node2
       ay_vision
       ${OpenCV_LIBRARIES}
       )
-
-

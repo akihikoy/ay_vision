@@ -10,6 +10,7 @@
 #include "ay_vision/flow_finder.h"
 // #include "ay_vision/mov_detector.h"
 #include "ay_vision/vision_util.h"
+#include "ay_cpp/cpp_util.h"
 //-------------------------------------------------------------------------------------------
 #include "ay_vision_msgs/ColDetSensor.h"
 #include "ay_vision_msgs/ColDetViz.h"

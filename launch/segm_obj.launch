@@ -1,4 +1,5 @@
 <launch>
+  <!--We use Baxter left hand camera-->
   <node type="segm_obj_node" pkg="ay_vision" name="segm_obj_node" output="screen">
     <param name="pkg_dir" value="$(find ay_vision)/" />
     <param name="segm_obj_config" value="config/segm_obj1.yaml" />

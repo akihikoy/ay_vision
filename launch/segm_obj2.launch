@@ -1,0 +1,11 @@
+<launch>
+  <!--We use a stream from aypi10:8080-->
+  <node name="htmlstream2ros_10_1" pkg="ay_vision" type="cv_usb_node"
+        args="$(find ay_vision)/config/aypi10_8080_vga.yaml" />
+
+  <node type="segm_obj_node" pkg="ay_vision" name="segm_obj_node" output="screen">
+    <param name="pkg_dir" value="$(find ay_vision)/" />
+    <param name="segm_obj_config" value="config/segm_obj1.yaml" />
+    <param name="img_topic" value="/htmlstream2ros_10_1/aypi10_8080/image_raw" />
+  </node>
+</launch>

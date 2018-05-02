@@ -7,10 +7,13 @@
 */
 //-------------------------------------------------------------------------------------------
 #include "ay_vision/vision_util.h"
+#include "ay_cpp/cpp_util.h"
+#include "ay_cpp/sys_util.h"
 //-------------------------------------------------------------------------------------------
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
+#include <iostream>
 #include <iomanip>
 //-------------------------------------------------------------------------------------------
 namespace cv
