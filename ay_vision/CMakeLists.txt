@@ -21,21 +21,25 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #uncomment if you have defined services
 #rosbuild_gensrv()
 
-# ++++OPENCV++++
-# NOTE: Install OpenCV 2.4.13 on ~/.local from source which includes cv::fisheye
-# Don't use opencv as found by any prior running of find_package
-unset(OpenCV_CONFIG_PATH CACHE)
-unset(OpenCV_DIR CACHE)
-set(TMP_PREFIX_PATH ${CMAKE_PREFIX_PATH})
-set(CMAKE_PREFIX_PATH "$ENV{HOME}/.local")
-find_package(OpenCV 2.4.13 REQUIRED)
-# restore CMAKE_PREFIX_PATH and other cached variables
-# in order to avoid other packages find this opencv.
-set(CMAKE_PREFIX_PATH ${TMP_PREFIX_PATH})
-unset(OpenCV_CONFIG_PATH CACHE)
-unset(OpenCV_DIR CACHE)
+# ++++OPENCV-2.x++++
+find_package(OpenCV 2 REQUIRED)
 message("OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
 message("OpenCV_LIBRARIES: ${OpenCV_LIBRARIES}")
+# ++++OPENCV-2.4.13++++
+# # NOTE: Install OpenCV 2.4.13 on ~/.local from source which includes cv::fisheye
+# # We don't use opencv found by any prior running of find_package
+# unset(OpenCV_CONFIG_PATH CACHE)
+# unset(OpenCV_DIR CACHE)
+# set(TMP_PREFIX_PATH ${CMAKE_PREFIX_PATH})
+# set(CMAKE_PREFIX_PATH "$ENV{HOME}/.local")
+# find_package(OpenCV 2.4.13 REQUIRED)
+# # restore CMAKE_PREFIX_PATH and other cached variables
+# # in order to avoid other packages find this opencv.
+# set(CMAKE_PREFIX_PATH ${TMP_PREFIX_PATH})
+# unset(OpenCV_CONFIG_PATH CACHE)
+# unset(OpenCV_DIR CACHE)
+# message("OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
+# message("OpenCV_LIBRARIES: ${OpenCV_LIBRARIES}")
 # ----OPENCV----
 
 find_package(Eigen3 REQUIRED)
@@ -138,6 +142,7 @@ target_link_libraries(cv_usb_node
       ay_vision
       ${OpenCV_LIBRARIES}
       libcv_bridge.so
+      boost_system
       )
 
 rosbuild_add_executable(disp_rostime
@@ -166,4 +171,6 @@ target_link_libraries(visual_skin_node2
       ayv_prox_vision
       ay_vision
       ${OpenCV_LIBRARIES}
+      boost_thread
+      boost_system
       )

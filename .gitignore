@@ -17,3 +17,6 @@ bin
 lib
 msg_gen
 srv_gen
+
+ay_vision_msgs/src/ay_vision_msgs
+
