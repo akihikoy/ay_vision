@@ -41,8 +41,27 @@
 namespace trick
 {
 bool Running(true), Shutdown(false), DoCalibrate(false);
-int FrameSkip(0);  // 0: no skip
 std::string *CurrentWin(NULL);
+
+/*FPS control parameters.
+  FrameSkip: Video image is processed every 1+FrameSkip frames.
+             FrameSkip=0: processing every frame.
+  TargetFPS: Video image is processed at this FPS.
+             TargetFPS=0: processing every frame.
+  NOTE: Do not set FrameSkip and TargetFPS simultaneously, which would be confusing.
+  Pseudo code:
+    for each frame f:
+      Capture frame;
+      if(FrameSkip<=0 || f%(FrameSkip+1)==0)  Process;
+    In Process:
+      ros::Rate rate(TargetFPS)
+      for each frame:
+        rate.sleep()
+  TODO:FIXME: Currently TargetFPS is not configurable during run time, but
+    changing TargetFPS in execution is useful.
+*/
+int FrameSkip(0);  // 0: no skip
+double TargetFPS(0);  // 0: no FPS control
 
 std::string BlobCalibPrefix("blob_");
 std::vector<TCameraInfo> CamInfo;
@@ -289,10 +308,12 @@ void ExecStereo(int i_stereo)
   TStereoInfo &info(StereoInfo[i_stereo]);
   cv::Mat frame[2];
   cv::Mat disparity;
+  ros::Rate rate(TargetFPS>0.0?TargetFPS:1);
   while(!Shutdown)
   {
     if(Running)
     {
+      if(TargetFPS>0.0)  rate.sleep();
       {
         boost::mutex::scoped_lock lock1(*MutFrameCopy[info.CamL]);
         boost::mutex::scoped_lock lock2(*MutFrameCopy[info.CamR]);
@@ -336,6 +357,7 @@ void ExecBlobTrack(int i_cam)
   TBlobTracker2 &tracker(BlobTracker[i_cam]);
   cv::Mat frame;
   int64_t t_cap(0);
+  ros::Rate rate(TargetFPS>0.0?TargetFPS:1);
   while(!Shutdown)
   {
     if(Running)
@@ -345,6 +367,7 @@ void ExecBlobTrack(int i_cam)
         usleep(10*1000);
         continue;
       }
+      if(TargetFPS>0.0)  rate.sleep();
 
       {
         boost::mutex::scoped_lock lock(*MutFrameCopy[i_cam]);
@@ -402,6 +425,7 @@ void ExecObjDetTrack(int i_cam)
   TObjDetTrackBSP &tracker(ObjDetTracker[i_cam]);
   cv::Mat frame;
   int64_t t_cap(0);
+  ros::Rate rate(TargetFPS>0.0?TargetFPS:1);
   while(!Shutdown)
   {
     if(Running)
@@ -411,6 +435,7 @@ void ExecObjDetTrack(int i_cam)
         usleep(10*1000);
         continue;
       }
+      if(TargetFPS>0.0)  rate.sleep();
 
       {
         boost::mutex::scoped_lock lock(*MutFrameCopy[i_cam]);
@@ -453,6 +478,7 @@ void ExecObjDetTrack(int i_cam)
         std::vector<float> vnu(nu,nu+7);
         prox_vision.ObjM_nu= vnu;
 
+        prox_vision.ObjS.resize(objs.rows*objs.cols);
         prox_vision.ObjS.resize(objs.rows*objs.cols);
         for(int r(0),rend(objs.rows),i(0);r<rend;++r) for(int c(0),cend(objs.cols);c<cend;++c,++i)
           prox_vision.ObjS[i]= objs.at<float>(r,c);
@@ -510,6 +536,7 @@ int main(int argc, char**argv)
   node.param("blob_calib_prefix",blob_calib_prefix,blob_calib_prefix);
   node.param("vout_base",vout_base,vout_base);
   node.param("frame_skip",FrameSkip,FrameSkip);
+  node.param("target_fps",TargetFPS,TargetFPS);
   std::cerr<<"pkg_dir: "<<pkg_dir<<std::endl;
   std::cerr<<"cam_config: "<<cam_config<<std::endl;
   std::cerr<<"blobtrack_config: "<<blobtrack_config<<std::endl;
@@ -687,7 +714,7 @@ int main(int argc, char**argv)
           Frame[i_cam]= frame;
           CapTime[i_cam]= GetCurrentTimeL();
         }
-      }
+      } 
 
       // Show windows
       for(std::map<std::string, TIMShowStuff>::iterator itr(IMShowStuff.begin()),itr_end(IMShowStuff.end()); itr!=itr_end; ++itr)
