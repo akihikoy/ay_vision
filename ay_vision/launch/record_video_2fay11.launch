@@ -1,0 +1,6 @@
+<launch>
+  <node type="record_video_node" pkg="ay_vision" name="visual_skin_node_ay1" output="screen">
+    <param name="pkg_dir" value="$(find ay_vision)/" />
+    <param name="cam_config" value="config/usbcam2fay11.yaml" />
+  </node>
+</launch>

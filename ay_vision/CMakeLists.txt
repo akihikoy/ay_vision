@@ -163,6 +163,16 @@ target_link_libraries(segm_obj_node
       libcv_bridge.so
       )
 
+rosbuild_add_executable(record_video_node
+      src_ros/record_video_node.cpp
+      )
+target_link_libraries(record_video_node
+      ay_vision
+      ${OpenCV_LIBRARIES}
+      boost_thread
+      boost_system
+      )
+
 rosbuild_add_executable(visual_skin_node2
       src_ros/visual_skin_node2.cpp
       )

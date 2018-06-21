@@ -2,7 +2,7 @@
 CameraInfo:
   -
     Name: usbcam2fay11_l
-    DevID: "http://aypi1:8080/?action=stream&dummy=file.mjpg"
+    DevID: "http://aypi11:8080/?action=stream&dummy=file.mjpg"
     Width: 320
     Height: 240
     PixelFormat: MJPG
@@ -27,7 +27,7 @@ CameraInfo:
       data: [ 1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0 ]
   -
     Name: usbcam2fay11_r
-    DevID: "http://aypi1:8081/?action=stream&dummy=file.mjpg"
+    DevID: "http://aypi11:8081/?action=stream&dummy=file.mjpg"
     Width: 320
     Height: 240
     PixelFormat: MJPG
