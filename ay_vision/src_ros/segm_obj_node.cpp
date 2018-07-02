@@ -131,35 +131,17 @@ void ColDetMaskCallback(const ay_vision_msgs::ColDetVizConstPtr &msg)
 }
 //-------------------------------------------------------------------------------------------
 
-void ImageCallback(const sensor_msgs::ImageConstPtr& msg)
+void ProcObjDetection(cv::Mat &frame, const std_msgs::Header &header)
 {
-  if(!Running)
-  {
-    if(!HandleKeyEvent())  ros::shutdown();
-    return;
-  }
-
-  cv_bridge::CvImagePtr cv_ptr;
-  try
-  {
-    cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
-  }
-  catch (cv_bridge::Exception& e)
-  {
-    ROS_ERROR("cv_bridge exception: %s", e.what());
-    return;
-  }
-  cv::Mat frame= cv_ptr->image;
   DrawColDetViz(frame, MaskObjs);
-
 
   ObjDetector.Step(frame);
 
   {
     ay_vision_msgs::SegmObj msg2;
-    msg2.header= msg->header;
-    msg2.height= msg->height;
-    msg2.width= msg->width;
+    msg2.header= header; // msg->header;
+    msg2.height= frame.rows; // msg->height;
+    msg2.width= frame.cols; // msg->width;
     msg2.num_points.resize(ObjDetector.Contours().size());
     int total_points(0);
     std::vector<int>::iterator m2npitr(msg2.num_points.begin());
@@ -192,6 +174,30 @@ void ImageCallback(const sensor_msgs::ImageConstPtr& msg)
 
   // cv::imshow("camera", frame);
   cv::imshow("segmented", img_disp);
+}
+//-------------------------------------------------------------------------------------------
+
+void ImageCallback(const sensor_msgs::ImageConstPtr& msg)
+{
+  if(!Running)
+  {
+    if(!HandleKeyEvent())  ros::shutdown();
+    return;
+  }
+
+  cv_bridge::CvImagePtr cv_ptr;
+  try
+  {
+    cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+  }
+  catch (cv_bridge::Exception& e)
+  {
+    ROS_ERROR("cv_bridge exception: %s", e.what());
+    return;
+  }
+  cv::Mat frame= cv_ptr->image;
+
+  ProcObjDetection(frame, msg->header);
 
   if(!HandleKeyEvent())  ros::shutdown();
 }
@@ -204,11 +210,19 @@ int main(int argc, char**argv)
   ros::NodeHandle node("~");
   std::string pkg_dir(".");
   std::string segm_obj_config("config/segm_obj1.yaml");
+  /*img_topic: ROS image topic.
+    img_dev: Standard image device(number) or stream URL.
+    If both are specified, img_topic is used. */
   std::string img_topic("/cameras/left_hand_camera/image");
+  std::string img_dev("");
 
   node.param("pkg_dir",pkg_dir,pkg_dir);
   node.param("segm_obj_config",segm_obj_config,segm_obj_config);
   node.param("img_topic",img_topic,img_topic);
+  node.param("img_dev",img_dev,img_dev);
+
+  std::cerr<<"img_topic: "<<img_topic<<std::endl;
+  std::cerr<<"img_dev: "<<img_dev<<std::endl;
 
   std::vector<TObjectDetectorParams> segm_obj_info;
   ReadFromYAML(segm_obj_info, pkg_dir+"/"+segm_obj_config);
@@ -229,9 +243,45 @@ int main(int argc, char**argv)
   ros::Subscriber sub_viz= node.subscribe("viz", 1, &ColDetVizCallback);
   // Mask request:
   ros::Subscriber sub_mask= node.subscribe("mask", 1, &ColDetMaskCallback);
-  ros::Subscriber sub_img= node.subscribe(img_topic, 1, &ImageCallback);
 
-  ros::spin();
+  if(img_topic!="")
+  {
+    ros::Subscriber sub_img= node.subscribe(img_topic, 1, &ImageCallback);
+    ros::spin();
+  }
+  else if(img_dev!="")
+  {
+    TCameraInfo info;
+    info.DevID= img_dev;
+    cv::VideoCapture cap;
+    if(!CapOpen(info, cap))  return -1;
+
+    cv::Mat frame;
+    std_msgs::Header header;
+    header.seq= 0;
+    header.frame_id= "";
+    header.stamp= ros::Time::now();
+    for(int f(0);ros::ok();++f)
+    {
+      if(Running)
+      {
+        while(!cap.read(frame))
+        {
+          if(CapWaitReopen(info,cap)) continue;
+          else  return -1;
+        }
+
+        ++header.seq;
+        header.stamp= ros::Time::now();
+        ProcObjDetection(frame, header);
+      }
+      else
+      {
+        usleep(200*1000);
+      }
+      if(!HandleKeyEvent())  break;
+    }
+  }
 
   return 0;
 }
