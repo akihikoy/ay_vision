@@ -1,4 +1,4 @@
-%YAML:1.0
+#%YAML:1.0
 #For single optical skin demo
 
 CameraInfo:
@@ -55,4 +55,4 @@ BlobTracker:
     DPEmp: 10.0
     NCalibPoints: 20
 
-StereoInfo:{}
+#StereoInfo:{}

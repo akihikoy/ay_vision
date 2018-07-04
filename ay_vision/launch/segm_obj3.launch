@@ -4,5 +4,6 @@
     <param name="segm_obj_config" value="config/segm_obj1.yaml" />
     <param name="img_topic" type="string" value="" />
     <param name="img_dev" type="string" value="http://aypi10:8080/?action=stream&amp;dummy=file.mjpg" />
+    <param name="frame_skip" value="4" />
   </node>
 </launch>

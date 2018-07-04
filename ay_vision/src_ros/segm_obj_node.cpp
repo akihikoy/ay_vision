@@ -13,6 +13,7 @@
 #include "ay_vision_msgs/SegmObj.h"
 #include "ay_vision_msgs/ColDetViz.h"
 #include "ay_vision_msgs/ColDetVizPrimitive.h"
+#include "ay_vision_msgs/SetInt32.h"
 //-------------------------------------------------------------------------------------------
 #include <opencv2/highgui/highgui.hpp>
 #include <ros/ros.h>
@@ -29,6 +30,8 @@ TObjectDetector ObjDetector;
 std::vector<ay_vision_msgs::ColDetVizPrimitive> VizObjs;  // External visualization request.
 std::vector<ay_vision_msgs::ColDetVizPrimitive> MaskObjs;  // Mask request.
 ros::Publisher SegmObjPub;
+
+int FrameSkip(0);  // 0: no skip
 
 }
 //-------------------------------------------------------------------------------------------
@@ -119,6 +122,15 @@ bool Resume(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
 }
 //-------------------------------------------------------------------------------------------
 
+bool SetFrameSkip(ay_vision_msgs::SetInt32::Request &req, ay_vision_msgs::SetInt32::Response &res)
+{
+  std::cerr<<"Setting frame skip as "<<req.data<<"..."<<std::endl;
+  FrameSkip= req.data;
+  res.result= true;
+  return true;
+}
+//-------------------------------------------------------------------------------------------
+
 void ColDetVizCallback(const ay_vision_msgs::ColDetVizConstPtr &msg)
 {
   VizObjs= msg->objects;
@@ -171,6 +183,7 @@ void ProcObjDetection(cv::Mat &frame, const std_msgs::Header &header)
   ObjDetector.Draw(img_disp);
 
   DrawColDetViz(img_disp, VizObjs);
+  DrawCrossOnCenter(img_disp, 20, cv::Scalar(255,255,255));
 
   // cv::imshow("camera", frame);
   cv::imshow("segmented", img_disp);
@@ -179,6 +192,8 @@ void ProcObjDetection(cv::Mat &frame, const std_msgs::Header &header)
 
 void ImageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
+  static int f(-1); ++f;
+
   if(!Running)
   {
     if(!HandleKeyEvent())  ros::shutdown();
@@ -197,7 +212,8 @@ void ImageCallback(const sensor_msgs::ImageConstPtr& msg)
   }
   cv::Mat frame= cv_ptr->image;
 
-  ProcObjDetection(frame, msg->header);
+  if(FrameSkip<=0 || f%(FrameSkip+1)==0)
+    ProcObjDetection(frame, msg->header);
 
   if(!HandleKeyEvent())  ros::shutdown();
 }
@@ -220,6 +236,7 @@ int main(int argc, char**argv)
   node.param("segm_obj_config",segm_obj_config,segm_obj_config);
   node.param("img_topic",img_topic,img_topic);
   node.param("img_dev",img_dev,img_dev);
+  node.param("frame_skip",FrameSkip,FrameSkip);
 
   std::cerr<<"img_topic: "<<img_topic<<std::endl;
   std::cerr<<"img_dev: "<<img_dev<<std::endl;
@@ -238,6 +255,7 @@ int main(int argc, char**argv)
 
   ros::ServiceServer srv_pause= node.advertiseService("pause", &Pause);
   ros::ServiceServer srv_resume= node.advertiseService("resume", &Resume);
+  ros::ServiceServer srv_set_frame_skip= node.advertiseService("set_frame_skip", &SetFrameSkip);
 
   // External visualization request:
   ros::Subscriber sub_viz= node.subscribe("viz", 1, &ColDetVizCallback);
@@ -271,15 +289,19 @@ int main(int argc, char**argv)
           else  return -1;
         }
 
-        ++header.seq;
-        header.stamp= ros::Time::now();
-        ProcObjDetection(frame, header);
+        if(FrameSkip<=0 || f%(FrameSkip+1)==0)
+        {
+          ++header.seq;
+          header.stamp= ros::Time::now();
+          ProcObjDetection(frame, header);
+        }
       }
       else
       {
         usleep(200*1000);
       }
       if(!HandleKeyEvent())  break;
+      ros::spinOnce();
     }
   }
 
