@@ -8,8 +8,8 @@ ObjectDetector:
     NDilate1: 1
 
     #For objects-on-white detector:
-    ThreshS: 61
-    ThreshV: 147
+    ThreshS: 93
+    ThreshV: 152
     NErode2: 1
     NDilate2: 2
     RectLenMin: 40
