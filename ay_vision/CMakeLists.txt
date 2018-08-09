@@ -55,12 +55,6 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 #Building libraries:
 
-rosbuild_add_library(ayv_blob_tracker2
-      src/blob_tracker2.cpp
-      )
-target_link_libraries(ayv_blob_tracker2
-      ${OpenCV_LIBRARIES}
-      )
 rosbuild_add_library(ayv_color_detector
       src/color_detector.cpp
       )
@@ -79,12 +73,6 @@ rosbuild_add_library(ayv_flow_finder
 target_link_libraries(ayv_flow_finder
       ${OpenCV_LIBRARIES}
       )
-rosbuild_add_library(ayv_prox_vision
-      src/prox_vision.cpp
-      )
-target_link_libraries(ayv_prox_vision
-      ${OpenCV_LIBRARIES}
-      )
 rosbuild_add_library(ayv_segm_obj
       src/segm_obj.cpp
       )
@@ -95,9 +83,6 @@ rosbuild_add_library(ayv_usb_stereo
       src/usb_stereo.cpp
       )
 target_link_libraries(ayv_usb_stereo
-      ${OpenCV_LIBRARIES}
-      )
-target_link_libraries(ayv_prox_vision
       ${OpenCV_LIBRARIES}
       )
 rosbuild_add_library(ay_vision
@@ -167,18 +152,6 @@ rosbuild_add_executable(record_video_node
       src_ros/record_video_node.cpp
       )
 target_link_libraries(record_video_node
-      ay_vision
-      ${OpenCV_LIBRARIES}
-      boost_thread
-      boost_system
-      )
-
-rosbuild_add_executable(visual_skin_node2
-      src_ros/visual_skin_node2.cpp
-      )
-target_link_libraries(visual_skin_node2
-      ayv_blob_tracker2
-      ayv_prox_vision
       ay_vision
       ${OpenCV_LIBRARIES}
       boost_thread

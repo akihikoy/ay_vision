@@ -22,8 +22,8 @@ Requirements
 ==================
 See `manifest.xml`.  OpenCV is used.
 
-This package depends on OpenCV 2.4.13.  On Ubuntu 14.04, OpenCV 2.4.8 is provided as a binary package which does not contain cv::fisheye, so you would need to build from source.
-Install OpenCV 2.4.13 on `~/.local` from source.
+Previously this package depended on OpenCV 2.4.13, but currently this can be compiled with OpenCV 2.4.8.
+You can install it from the Ubuntu repository if your Ubuntu version is 14.04 or 16.04.
 
 
 Directories
@@ -64,7 +64,10 @@ Multiple color detector.  It can detect colored objects, and flow.
 
 visual_skin
 ---------------------------
-Processing program of FingerVision.
+The processing programs of FingerVision are moved to a new package `fingervision`.
+Use `fv_core_node` in `fingervision` instead of `visual_skin`.
+
+The former launch and configuration files of `visual_skin` are moved to the `ay_fv_extra` package, which is a launcher of `fingervision`.
 
 cv_usb
 ---------------------------
@@ -82,3 +85,4 @@ Segmenting an object which should be placed on a white background.
 Troubles
 ==================
 Send e-mails to the author.
+
