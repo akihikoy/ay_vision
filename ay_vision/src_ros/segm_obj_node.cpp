@@ -17,6 +17,7 @@
 //-------------------------------------------------------------------------------------------
 #include <opencv2/highgui/highgui.hpp>
 #include <ros/ros.h>
+#include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <std_srvs/Empty.h>
 #include <sensor_msgs/image_encodings.h>
@@ -30,6 +31,7 @@ TObjectDetector ObjDetector;
 std::vector<ay_vision_msgs::ColDetVizPrimitive> VizObjs;  // External visualization request.
 std::vector<ay_vision_msgs::ColDetVizPrimitive> MaskObjs;  // Mask request.
 ros::Publisher SegmObjPub;
+image_transport::Publisher  ObjMaskPub;
 
 int FrameSkip(0);  // 0: no skip
 
@@ -176,6 +178,8 @@ void ProcObjDetection(cv::Mat &frame, const std_msgs::Header &header)
       }
     }
     SegmObjPub.publish(msg2);
+
+    ObjMaskPub.publish( cv_bridge::CvImage(header, "8UC1", ObjDetector.ObjectMask()).toImageMsg() );
   }
 
   cv::Mat img_disp;
@@ -252,6 +256,8 @@ int main(int argc, char**argv)
   ObjDetector.Init();
 
   SegmObjPub= node.advertise<ay_vision_msgs::SegmObj>(std::string("segm_obj"), 1);
+  image_transport::ImageTransport imgtr(node);
+  ObjMaskPub= imgtr.advertise("obj_mask", 1);
 
   ros::ServiceServer srv_pause= node.advertiseService("pause", &Pause);
   ros::ServiceServer srv_resume= node.advertiseService("resume", &Resume);

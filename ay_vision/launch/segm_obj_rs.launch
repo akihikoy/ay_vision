@@ -1,0 +1,9 @@
+<launch>
+  <node type="segm_obj_node" pkg="ay_vision" name="segm_obj" output="screen">
+    <param name="pkg_dir" value="$(find ay_vision)/" />
+    <param name="segm_obj_config" value="config/segm_obj_rs.yaml" />
+    <param name="img_topic" type="string" value="/camera/color/image_raw" />
+    <param name="img_dev" type="string" value="" />
+    <param name="frame_skip" value="0" />
+  </node>
+</launch>

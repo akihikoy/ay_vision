@@ -1,0 +1,7 @@
+%YAML:1.0
+CameraInfo:
+  -
+    Name: cam0
+    DevID: "0"
+    Width: 640
+    Height: 480
