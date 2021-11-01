@@ -76,12 +76,12 @@ void GetMedian(const cv::Mat &src, int &x_med, int &y_med)
 //-------------------------------------------------------------------------------------------
 
 // Extract rows of src and store to dst (works for &dst==&src)
-void ExtractRows(const cv::Mat &src, const cv::vector<int> &idx, cv::Mat &dst)
+void ExtractRows(const cv::Mat &src, const std::vector<int> &idx, cv::Mat &dst)
 {
   cv::Mat buf(src);
   dst.create(idx.size(),buf.cols,buf.type());
   int r(0);
-  for(cv::vector<int>::const_iterator itr(idx.begin()),itr_end(idx.end()); itr!=itr_end; ++itr,++r)
+  for(std::vector<int>::const_iterator itr(idx.begin()),itr_end(idx.end()); itr!=itr_end; ++itr,++r)
     buf.row(*itr).copyTo(dst.row(r));
 }
 //-------------------------------------------------------------------------------------------
@@ -320,6 +320,14 @@ void ProjectPointsToRectifiedImg(const cv::Mat &points3d, const cv::Mat &P, cv::
 }
 //-------------------------------------------------------------------------------------------
 
+void DrawCrossOnCenter(cv::Mat &img, int size, const cv::Scalar &col, int thickness)
+{
+  int hsize(size/2);
+  cv::line(img, cv::Point(img.cols/2-hsize,img.rows/2), cv::Point(img.cols/2+hsize,img.rows/2), col, thickness);
+  cv::line(img, cv::Point(img.cols/2,img.rows/2-hsize), cv::Point(img.cols/2,img.rows/2+hsize), col, thickness);
+}
+//-------------------------------------------------------------------------------------------
+
 bool OpenVideoOut(cv::VideoWriter &vout, const char *file_name, int fps, const cv::Size &size)
 {
   // int codec= CV_FOURCC('P','I','M','1');  // mpeg1video
@@ -460,7 +468,13 @@ void ReadFromYAML(std::vector<cv::KeyPoint> &keypoints, const std::string &file_
   keypoints.clear();
   cv::FileStorage fs(file_name, cv::FileStorage::READ);
   cv::FileNode data= fs["KeyPoints"];
-  data>>keypoints;
+  // data>>keypoints;
+  for(cv::FileNodeIterator itr(data.begin()),itr_end(data.end()); itr!=itr_end; ++itr)
+  {
+    cv::KeyPoint kp;
+    *itr>>kp;
+    keypoints.push_back(kp);
+  }
   fs.release();
 }
 //-------------------------------------------------------------------------------------------
@@ -660,25 +674,25 @@ void TCameraRectifier::Rectify(cv::Mat &frame, const cv::Scalar& border)
 namespace cv
 {
 
-void write(cv::FileStorage &fs, const std::string&, const cv::Point2f &x)
-{
-  #define PROC_VAR(v)  fs<<#v<<x.v;
-  fs<<"{";
-  PROC_VAR(x);
-  PROC_VAR(y);
-  fs<<"}";
-  #undef PROC_VAR
-}
-//-------------------------------------------------------------------------------------------
-void read(const cv::FileNode &data, cv::Point2f &x, const cv::Point2f &default_value)
-{
-  #define PROC_VAR(v)  if(!data[#v].empty()) data[#v]>>x.v;
-  PROC_VAR(x);
-  PROC_VAR(y);
-  #undef PROC_VAR
-}
-//-------------------------------------------------------------------------------------------
-void write(cv::FileStorage &fs, const std::string&, const cv::KeyPoint &x)
+// void write(cv::FileStorage &fs, const cv::String&, const cv::Point2f &x)
+// {
+//   #define PROC_VAR(v)  fs<<#v<<x.v;
+//   fs<<"{";
+//   PROC_VAR(x);
+//   PROC_VAR(y);
+//   fs<<"}";
+//   #undef PROC_VAR
+// }
+// //-------------------------------------------------------------------------------------------
+// void read(const cv::FileNode &data, cv::Point2f &x, const cv::Point2f &default_value)
+// {
+//   #define PROC_VAR(v)  if(!data[#v].empty()) data[#v]>>x.v;
+//   PROC_VAR(x);
+//   PROC_VAR(y);
+//   #undef PROC_VAR
+// }
+// //-------------------------------------------------------------------------------------------
+void write(cv::FileStorage &fs, const cv::String&, const cv::KeyPoint &x)
 {
   #define PROC_VAR(v)  fs<<#v<<x.v;
   fs<<"{";
@@ -705,7 +719,7 @@ void read(const cv::FileNode &data, cv::KeyPoint &x, const cv::KeyPoint &default
 }
 //-------------------------------------------------------------------------------------------
 
-// void write(cv::FileStorage &fs, const std::string&, const cv::SimpleBlobDetector::Params &x)
+// void write(cv::FileStorage &fs, const cv::String&, const cv::SimpleBlobDetector::Params &x)
 // {
   // x.write(fs);
 // }
@@ -716,7 +730,7 @@ void read(const cv::FileNode &data, cv::KeyPoint &x, const cv::KeyPoint &default
 // }
 // //-------------------------------------------------------------------------------------------
 
-void write(cv::FileStorage &fs, const std::string&, const trick::TCameraInfo &x)
+void write(cv::FileStorage &fs, const cv::String&, const trick::TCameraInfo &x)
 {
   #define PROC_VAR(v)  fs<<#v<<x.v;
   fs<<"{";

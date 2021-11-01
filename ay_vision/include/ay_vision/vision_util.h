@@ -55,7 +55,7 @@ void GetMedian(const cv::Mat &src, int &x_med, int &y_med);
 //-------------------------------------------------------------------------------------------
 
 // Extract rows of src and store to dst (works for &dst==&src)
-void ExtractRows(const cv::Mat &src, const cv::vector<int> &idx, cv::Mat &dst);
+void ExtractRows(const cv::Mat &src, const std::vector<int> &idx, cv::Mat &dst);
 //-------------------------------------------------------------------------------------------
 
 // Find the largest contour and return info. bin_src should be a binary image.
@@ -77,12 +77,7 @@ cv::Mat ClipPolygon(const cv::Mat &polygon_subject, const cv::Mat &polygon_clip)
 void ProjectPointsToRectifiedImg(const cv::Mat &points3d, const cv::Mat &P, cv::Mat &points2d);
 //-------------------------------------------------------------------------------------------
 
-inline void DrawCrossOnCenter(cv::Mat &img, int size, const cv::Scalar &col, int thickness=1)
-{
-  int hsize(size/2);
-  cv::line(img, cv::Point(img.cols/2-hsize,img.rows/2), cv::Point(img.cols/2+hsize,img.rows/2), col, thickness);
-  cv::line(img, cv::Point(img.cols/2,img.rows/2-hsize), cv::Point(img.cols/2,img.rows/2+hsize), col, thickness);
-}
+void DrawCrossOnCenter(cv::Mat &img, int size, const cv::Scalar &col, int thickness=1);
 //-------------------------------------------------------------------------------------------
 
 // Convert a mask to a color image.
@@ -355,27 +350,27 @@ void TrackbarPrintOnTrack(const TExtendedTrackbarInfo<T> &info, void*)
 namespace cv
 {
 //-------------------------------------------------------------------------------------------
-void write(cv::FileStorage &fs, const std::string&, const cv::Point2f &x);
-void read(const cv::FileNode &data, cv::Point2f &x, const cv::Point2f &default_value=cv::Point2f());
-void write(cv::FileStorage &fs, const std::string&, const cv::KeyPoint &x);
+// void write(cv::FileStorage &fs, const cv::String&, const cv::Point2f &x);
+// void read(const cv::FileNode &data, cv::Point2f &x, const cv::Point2f &default_value=cv::Point2f());
+void write(cv::FileStorage &fs, const cv::String&, const cv::KeyPoint &x);
 void read(const cv::FileNode &data, cv::KeyPoint &x, const cv::KeyPoint &default_value=cv::KeyPoint());
-// void write(cv::FileStorage &fs, const std::string&, const cv::SimpleBlobDetector::Params &x);
+// void write(cv::FileStorage &fs, const cv::String&, const cv::SimpleBlobDetector::Params &x);
 // void read(const cv::FileNode &data, cv::SimpleBlobDetector::Params &x, const cv::SimpleBlobDetector::Params &default_value=cv::SimpleBlobDetector::Params());
 
-void write(cv::FileStorage &fs, const std::string&, const trick::TCameraInfo &x);
+void write(cv::FileStorage &fs, const cv::String&, const trick::TCameraInfo &x);
 void read(const cv::FileNode &data, trick::TCameraInfo &x, const trick::TCameraInfo &default_value=trick::TCameraInfo());
 
 // For saving vector of vector.
-template<typename T>
-void write(cv::FileStorage &fs, const std::string&, const std::vector<std::vector<T> > &x)
-{
-  fs<<"[";
-  for(typename std::vector<std::vector<T> >::const_iterator itr(x.begin()),end(x.end());itr!=end;++itr)
-  {
-    fs<<*itr;
-  }
-  fs<<"]";
-}
+// template<typename T>
+// void write(cv::FileStorage &fs, const cv::String&, const std::vector<std::vector<T> > &x)
+// {
+//   fs<<"[";
+//   for(typename std::vector<std::vector<T> >::const_iterator itr(x.begin()),end(x.end());itr!=end;++itr)
+//   {
+//     fs<<*itr;
+//   }
+//   fs<<"]";
+// }
 
 // Define a new bool reader in order to accept "true/false"-like values.
 inline void read_bool(const cv::FileNode &node, bool &value, const bool &default_value)
