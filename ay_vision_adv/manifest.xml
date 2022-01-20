@@ -1,14 +1,15 @@
 <package>
-  <description brief="ay_vision">
+  <description brief="ay_vision_adv">
 
-     ay_vision
+     ay_vision_adv
 
   </description>
-  <author>Akihiko Yamaguchi</author>
+  <author>akihikoy</author>
   <license>Described in LICENSE</license>
   <review status="unreviewed" notes=""/>
   <url>http://akihikoy.net</url>
   <depend package="ay_vision_msgs"/>
+  <depend package="ay_vision"/>
   <depend package="ay_cpp"/>
   <depend package="roscpp"/>
   <depend package="std_msgs"/>
@@ -29,5 +30,3 @@
   </export>
 
 </package>
-
-

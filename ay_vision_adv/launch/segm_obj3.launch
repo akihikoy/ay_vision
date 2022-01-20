@@ -1,0 +1,9 @@
+<launch>
+  <node type="segm_obj_node" pkg="ay_vision_adv" name="segm_obj_node" output="screen">
+    <param name="pkg_dir" value="$(find ay_vision_adv)/" />
+    <param name="segm_obj_config" value="config/segm_obj1.yaml" />
+    <param name="img_topic" type="string" value="" />
+    <param name="img_dev" type="string" value="http://aypi10:8080/?action=stream&amp;dummy=file.mjpg" />
+    <param name="frame_skip" value="10" />
+  </node>
+</launch>

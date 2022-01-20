@@ -1,0 +1,4 @@
+<launch>
+  <node name="htmlstream2ros_10_1" pkg="ay_vision_adv" type="cv_usb_node"
+        args="$(find ay_vision_adv)/config/aypi10_8080_vga.yaml" />
+</launch>

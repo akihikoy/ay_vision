@@ -1,4 +1,0 @@
-<launch>
-  <node name="cv_usb_node" pkg="ay_vision" type="cv_usb_node"
-        args="$(find ay_vision)/config/cam0.yaml" />
-</launch>
