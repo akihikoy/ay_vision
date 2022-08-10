@@ -84,6 +84,8 @@ TObjectDetectorParams::TObjectDetectorParams()
   NDilate2= 2;
   RectLenMin= 40;
   RectLenMax= 400;
+  AreaMin= 250;
+  AreaMax= 0;
   ContourApproxEps= 3.0;  // Contour approximation. If zero, no approximation.
 }
 //-------------------------------------------------------------------------------------------
@@ -106,6 +108,8 @@ void WriteToYAML(const std::vector<TObjectDetectorParams> &params, const std::st
     PROC_VAR(NDilate2   );
     PROC_VAR(RectLenMin );
     PROC_VAR(RectLenMax );
+    PROC_VAR(AreaMin    );
+    PROC_VAR(AreaMax    );
     PROC_VAR(ContourApproxEps );
     fs<<"}";
     #undef PROC_VAR
@@ -134,6 +138,8 @@ void ReadFromYAML(std::vector<TObjectDetectorParams> &params, const std::string 
     PROC_VAR(NDilate2   );
     PROC_VAR(RectLenMin );
     PROC_VAR(RectLenMax );
+    PROC_VAR(AreaMin    );
+    PROC_VAR(AreaMax    );
     PROC_VAR(ContourApproxEps );
     #undef PROC_VAR
     params.push_back(cf);
@@ -179,23 +185,27 @@ void TObjectDetector::Step(const cv::Mat &frame)
   cv::erode(mask_objects_,mask_objects_,cv::Mat(),cv::Point(-1,-1), params_.NErode2);
 
   // Find object contours
-  if(params_.ContourApproxEps>0.0)
+  std::vector<std::vector<cv::Point> > contours;
+  cv::findContours(mask_objects_, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+
+  // Apply filters to object contours
+  contours_obj_.clear();
+  for(std::vector<std::vector<cv::Point> >::const_iterator
+      citr(contours.begin()),citr_end(contours.end()); citr!=citr_end; ++citr)
   {
-    std::vector<std::vector<cv::Point> > contours;
-    cv::findContours(mask_objects_, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-    contours_obj_.clear();
-    contours_obj_.resize(contours.size());
-    std::vector<std::vector<cv::Point> >::iterator oitr(contours_obj_.begin());
-    for(std::vector<std::vector<cv::Point> >::const_iterator
-        citr(contours.begin()),citr_end(contours.end()); citr!=citr_end; ++citr,++oitr)
+    cv::Rect bound= cv::boundingRect(*citr);
+    if(bound.width<params_.RectLenMin || bound.width>params_.RectLenMax
+      || bound.height<params_.RectLenMin || bound.height>params_.RectLenMax)  continue;
+    double area= cv::contourArea(*citr,false);
+    if(area<params_.AreaMin || (params_.AreaMax>0 && area>params_.AreaMax))  continue;
+    if(params_.ContourApproxEps>0.0)
     {
-      cv::approxPolyDP(*citr, *oitr, params_.ContourApproxEps, /*closed=*/true);
+      std::vector<cv::Point> capprox;
+      cv::approxPolyDP(*citr, capprox, params_.ContourApproxEps, /*closed=*/true);
+      contours_obj_.push_back(capprox);
     }
-  }
-  else
-  {
-    contours_obj_.clear();
-    cv::findContours(mask_objects_, contours_obj_, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    else
+      contours_obj_.push_back(*citr);
   }
 }
 //-------------------------------------------------------------------------------------------
@@ -211,13 +221,9 @@ void TObjectDetector::Draw(cv::Mat &frame)
   {
     for(int ic(0),ic_end(contours_obj_.size()); ic<ic_end; ++ic)
     {
-      // double area= cv::contourArea(contours_obj_[ic],false);
-      cv::Rect bound= cv::boundingRect(contours_obj_[ic]);
-      int bound_len= std::max(bound.width, bound.height);
-      if(bound_len<params_.RectLenMin || bound_len>params_.RectLenMax)  continue;
       cv::drawContours(img_disp, contours_obj_, ic, CV_RGB(255,0,255), /*thickness=*/2, /*linetype=*/8);
-
-      cv::rectangle(img_disp, bound, cv::Scalar(0,0,255), 2);
+      // cv::Rect bound= cv::boundingRect(contours_obj_[ic]);
+      // cv::rectangle(img_disp, bound, cv::Scalar(0,0,255), 2);
     }
   }
 }

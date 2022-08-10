@@ -35,6 +35,8 @@ struct TObjectDetectorParams
   int NDilate2;
   int RectLenMin;
   int RectLenMax;
+  int AreaMin;
+  int AreaMax;
   double ContourApproxEps;  // Contour approximation. If zero, no approximation.
 
   TObjectDetectorParams();

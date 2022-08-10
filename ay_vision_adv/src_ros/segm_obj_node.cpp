@@ -8,7 +8,7 @@
 //-------------------------------------------------------------------------------------------
 #include "ay_vision_adv/segm_obj.h"
 #include "ay_vision/vision_util.h"
-#include "viz_util.h"
+#include "ay_vision_adv/viz_util.h"
 //-------------------------------------------------------------------------------------------
 #include "ay_vision_msgs/SegmObj.h"
 #include "ay_vision_msgs/ColDetViz.h"

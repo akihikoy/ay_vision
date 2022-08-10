@@ -85,6 +85,13 @@ target_link_libraries(ayv_segm_obj
       ${OpenCV_LIBRARIES}
       )
 
+rosbuild_add_library(ayv_viz_util
+      src_ros/viz_util.cpp
+      )
+target_link_libraries(ayv_viz_util
+      ${OpenCV_LIBRARIES}
+      )
+
 file(GLOB raytrace_srcs1 "include/ay_vision/3rdparty/doncross/*.cpp")
 file(GLOB raytrace_srcs2 "include/ay_vision/3rdparty/lodepng/*.cpp")
 rosbuild_add_library(ayv_rt_pose_estimator
@@ -133,10 +140,10 @@ target_link_libraries(disp_rostime
 
 rosbuild_add_executable(segm_obj_node
       src_ros/segm_obj_node.cpp
-      src_ros/viz_util.cpp
       )
 target_link_libraries(segm_obj_node
       ayv_segm_obj
+      ayv_viz_util
       ay_vision
       ${OpenCV_LIBRARIES}
       #libcv_bridge.so
