@@ -24,6 +24,7 @@ void DrawColDetViz(cv::Mat &img, const std::vector<ay_vision_msgs::ColDetVizPrim
     cv::Scalar col= CV_RGB(itr->color.r,itr->color.g,itr->color.b);
     const double &lw= itr->line_width;
     std::vector<std::vector<cv::Point> >  points(1);
+    cv::Mat mask;
     switch(itr->type)
     {
     case ay_vision_msgs::ColDetVizPrimitive::LINE :
@@ -46,6 +47,15 @@ void DrawColDetViz(cv::Mat &img, const std::vector<ay_vision_msgs::ColDetVizPrim
       for(int i(0),i_end(itr->param.size()/2); i<i_end; ++i)
         points[0][i]= cv::Point(itr->param[2*i],itr->param[2*i+1]);
       cv::fillPoly(img, points, col);
+      break;
+    case ay_vision_msgs::ColDetVizPrimitive::REVERSED_POLY :
+      mask.create(img.size(), CV_8UC1);
+      mask.setTo(1);
+      points[0].resize(itr->param.size()/2);
+      for(int i(0),i_end(itr->param.size()/2); i<i_end; ++i)
+        points[0][i]= cv::Point(itr->param[2*i],itr->param[2*i+1]);
+      cv::fillPoly(mask, points, 0);
+      img.setTo(col, mask);
       break;
     default:
       std::cerr<<"Unknown type:"<<itr->type<<std::endl;
