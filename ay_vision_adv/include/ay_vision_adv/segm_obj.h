@@ -31,6 +31,7 @@ struct TObjectDetectorParams
   // For objects-on-white detector:
   int ThreshS;
   int ThreshV;
+  int NErode20;
   int NErode2;
   int NDilate2;
   int RectLenMin;

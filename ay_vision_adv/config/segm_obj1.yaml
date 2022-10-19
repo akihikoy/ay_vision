@@ -10,6 +10,7 @@ ObjectDetector:
     #For objects-on-white detector:
     ThreshS: 93
     ThreshV: 152
+    NErode20: 0
     NErode2: 1
     NDilate2: 2
     RectLenMin: 40

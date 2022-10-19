@@ -80,6 +80,7 @@ TObjectDetectorParams::TObjectDetectorParams()
   // For objects-on-white detector:
   ThreshS= 30;
   ThreshV= 224;
+  NErode20= 0;
   NErode2= 1;
   NDilate2= 2;
   RectLenMin= 40;
@@ -104,6 +105,7 @@ void WriteToYAML(const std::vector<TObjectDetectorParams> &params, const std::st
     PROC_VAR(NDilate1   );
     PROC_VAR(ThreshS    );
     PROC_VAR(ThreshV    );
+    PROC_VAR(NErode20   );
     PROC_VAR(NErode2    );
     PROC_VAR(NDilate2   );
     PROC_VAR(RectLenMin );
@@ -134,6 +136,7 @@ void ReadFromYAML(std::vector<TObjectDetectorParams> &params, const std::string 
     PROC_VAR(NDilate1   );
     PROC_VAR(ThreshS    );
     PROC_VAR(ThreshV    );
+    PROC_VAR(NErode20   );
     PROC_VAR(NErode2    );
     PROC_VAR(NDilate2   );
     PROC_VAR(RectLenMin );
@@ -181,6 +184,7 @@ void TObjectDetector::Step(const cv::Mat &frame)
               cv::Scalar(255, 255, params_.ThreshV), mask_objects_);
   mask_objects_.setTo(0, 1-mask_white_biggest_);
 
+  cv::erode(mask_objects_,mask_objects_,cv::Mat(),cv::Point(-1,-1), params_.NErode20);
   cv::dilate(mask_objects_,mask_objects_,cv::Mat(),cv::Point(-1,-1), params_.NDilate2);
   cv::erode(mask_objects_,mask_objects_,cv::Mat(),cv::Point(-1,-1), params_.NErode2);
 

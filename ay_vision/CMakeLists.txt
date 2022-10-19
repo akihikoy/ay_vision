@@ -71,6 +71,12 @@ rosbuild_add_library(ay_vision
 target_link_libraries(ay_vision
       ${OpenCV_LIBRARIES}
       )
+rosbuild_add_library(ayv_ros
+      src_ros/ros_util.cpp
+      )
+target_link_libraries(ayv_ros
+      ${OpenCV_LIBRARIES}
+      )
 
 
 #Building executables:
