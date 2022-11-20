@@ -10,6 +10,7 @@
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/CameraInfo.h>
 //-------------------------------------------------------------------------------------------
 #include "ay_vision/ros_util.h"
 //-------------------------------------------------------------------------------------------
@@ -34,6 +35,31 @@ std::string GetImageEncoding(const std::string &img_topic, ros::NodeHandle &node
   if(encoding=="RGB8")  return "BGR8";
   // TODO: Add more conversion if necessary.
   return encoding;
+}
+//-------------------------------------------------------------------------------------------
+
+
+// Get camera projection matrix from ros topic.
+void GetCameraProjectionMatrix(const std::string &cam_info_topic, std::string &frame_id, cv::Mat &proj_mat)
+{
+  ros::NodeHandle node("~");
+  boost::shared_ptr<sensor_msgs::CameraInfo const> ptr_cam_info;
+  sensor_msgs::CameraInfo cam_info;
+  ptr_cam_info= ros::topic::waitForMessage<sensor_msgs::CameraInfo>(cam_info_topic, node);
+  if(ptr_cam_info==NULL)
+  {
+    std::cerr<<"Failed to get camera info from the topic: "<<cam_info_topic<<std::endl;
+    return;
+  }
+  cam_info= *ptr_cam_info;
+
+  // std::cerr<<"cam_info: "<<cam_info<<std::endl;
+  frame_id= cam_info.header.frame_id;
+  // cv::Mat proj_mat(3,4, CV_64F, cam_info.P);
+  proj_mat.create(3,4, CV_64F);
+  for(int r(0),i(0);r<3;++r)
+    for(int c(0);c<4;++c,++i)
+      proj_mat.at<double>(r,c)= cam_info.P[i];
 }
 //-------------------------------------------------------------------------------------------
 

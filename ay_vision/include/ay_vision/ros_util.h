@@ -21,6 +21,10 @@ namespace trick
 std::string GetImageEncoding(const std::string &img_topic, ros::NodeHandle &node, bool convert_cv=false, const double &time_out=5.0);
 //-------------------------------------------------------------------------------------------
 
+// Get camera projection matrix from ros topic.
+void GetCameraProjectionMatrix(const std::string &cam_info_topic, std::string &frame_id, cv::Mat &proj_mat);
+//-------------------------------------------------------------------------------------------
+
 
 //-------------------------------------------------------------------------------------------
 }  // end of trick
