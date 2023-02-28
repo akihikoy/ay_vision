@@ -347,9 +347,10 @@ struct TCameraInfo
   int Width, Height;  // Image size
   int FPS;  // Video frame rate
   std::string PixelFormat;  // Video codec (e.g. MJPG, YUYV)
+  int CapWidth, CapHeight;  // Capture size (if zero, Width/Height is used; if not zero, captured image is resized to (Width,Height))
+  cv::Rect CropRect;  // Crop the image after resizing to Width,Height. Disabled if one of them is negative.
   int HFlip;  // Whether flip image (horizontally), applied before NRotate90
   int NRotate90;  // Number of 90-deg rotations
-  int CapWidth, CapHeight;  // Capture size (if zero, Width/Height is used; if not zero, captured image is resized to (Width,Height))
   std::string Name;
   int Rectification;  // Whether rectify image or not
   double Alpha;     // Scaling factor
@@ -357,13 +358,17 @@ struct TCameraInfo
   TCameraInfo()
       : DevID("0"),
         Width(0), Height(0), FPS(0),
-        HFlip(0), NRotate90(0),
         CapWidth(0), CapHeight(0),
+        CropRect(-1,-1,-1,-1),
+        HFlip(0), NRotate90(0),
         Rectification(0), Alpha(1.0) {}
 };
 //-------------------------------------------------------------------------------------------
 bool CapOpen(TCameraInfo &info, cv::VideoCapture &cap);
 bool CapWaitReopen(TCameraInfo &info, cv::VideoCapture &cap, int ms_wait=1000, int max_count=0, bool(*check_to_stop)(void)=NULL);
+struct TCameraRectifier;
+// Apply an image pre-processing to an image according to the camera info.
+void Preprocess(cv::Mat &frame, const TCameraInfo &info, TCameraRectifier *pcam_rectifier=NULL);
 void Print(const std::vector<TCameraInfo> &cam_info);
 void WriteToYAML(const std::vector<TCameraInfo> &cam_info, const std::string &file_name);
 void ReadFromYAML(std::vector<TCameraInfo> &cam_info, const std::string &file_name);
