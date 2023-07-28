@@ -31,7 +31,7 @@ void FindWhiteContours(
     const cv::Mat &frame,
     cv::Mat &frame_white,
     std::vector<std::vector<cv::Point> > &contours,
-    int v_min=100, int s_max=20, int n_dilate=1, int n_erode=1)
+    int v_min, int s_max, int n_dilate, int n_erode)
 {
   cv::Mat frame_hsv;
 
@@ -49,7 +49,7 @@ void FindWhiteContours(
 
 // Make a mask from biggest contour.
 void MakeBiggestContourMask(const std::vector<std::vector<cv::Point> > &contours,
-    cv::Mat &mask, bool convex=false, int fill_value=1)
+    cv::Mat &mask, bool convex, int fill_value)
 {
   if(contours.size()==0)  return;
   double a(0.0),a_max(0.0), i_max(0);

@@ -20,6 +20,25 @@ namespace trick
 {
 //-------------------------------------------------------------------------------------------
 
+/*Find contours of white areas.
+  frame: Input image.
+  frame_white: Detected white image.
+  contours: Found contours.
+  v_min, s_max: Thresholds of V-minimum and S-maximum of HSV.
+  n_dilate, n_erode: dilate and erode filter parameters before detecting contours.
+*/
+void FindWhiteContours(
+    const cv::Mat &frame,
+    cv::Mat &frame_white,
+    std::vector<std::vector<cv::Point> > &contours,
+    int v_min=100, int s_max=20, int n_dilate=1, int n_erode=1);
+
+// Make a mask from biggest contour.
+void MakeBiggestContourMask(const std::vector<std::vector<cv::Point> > &contours,
+    cv::Mat &mask, bool convex=false, int fill_value=1);
+
+//-------------------------------------------------------------------------------------------
+
 struct TObjectDetectorParams
 {
   // For white detector:
