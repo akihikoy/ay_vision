@@ -19,6 +19,8 @@ namespace trick
 
 void DrawColDetViz(cv::Mat &img, const std::vector<ay_vision_msgs::ColDetVizPrimitive> &objects);
 
+void WriteToYAML(const std::vector<ay_vision_msgs::ColDetVizPrimitive> &viz_objs, const std::string &file_name, const std::string &section="VizPrimitive");
+void ReadFromYAML(std::vector<ay_vision_msgs::ColDetVizPrimitive> &viz_objs, const std::string &file_name, const std::string &section="VizPrimitive");
 
 //-------------------------------------------------------------------------------------------
 }  // end of trick

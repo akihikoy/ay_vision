@@ -65,8 +65,81 @@ void DrawColDetViz(cv::Mat &img, const std::vector<ay_vision_msgs::ColDetVizPrim
 }
 //-------------------------------------------------------------------------------------------
 
+void WriteToYAML(const std::vector<ay_vision_msgs::ColDetVizPrimitive> &viz_objs, const std::string &file_name, const std::string &section)
+{
+  cv::FileStorage fs(file_name, cv::FileStorage::WRITE);
+  fs<<section<<"[";
+  for(std::vector<ay_vision_msgs::ColDetVizPrimitive>::const_iterator itr(viz_objs.begin()),itr_end(viz_objs.end()); itr!=itr_end; ++itr)
+  {
+    fs<<"{";
+    #define PROC_VAR(x)  fs<<#x<<itr->x;
+    PROC_VAR(type       );
+    PROC_VAR(color      );
+    PROC_VAR(param      );
+    PROC_VAR(line_width );
+    fs<<"}";
+    #undef PROC_VAR
+  }
+  fs<<"]";
+  fs.release();
+}
+//-------------------------------------------------------------------------------------------
+
+void ReadFromYAML(std::vector<ay_vision_msgs::ColDetVizPrimitive> &viz_objs, const std::string &file_name, const std::string &section)
+{
+  viz_objs.clear();
+  cv::FileStorage fs(file_name, cv::FileStorage::READ);
+  cv::FileNode data= fs[section];
+  for(cv::FileNodeIterator itr(data.begin()),itr_end(data.end()); itr!=itr_end; ++itr)
+  {
+    ay_vision_msgs::ColDetVizPrimitive y;
+    #define PROC_VAR(x)  if(!(*itr)[#x].empty())  (*itr)[#x]>>y.x;
+    PROC_VAR(type       );
+    PROC_VAR(color      );
+    PROC_VAR(param      );
+    PROC_VAR(line_width );
+    #undef PROC_VAR
+    viz_objs.push_back(y);
+  }
+  fs.release();
+}
+//-------------------------------------------------------------------------------------------
+
+
 
 //-------------------------------------------------------------------------------------------
 }  // end of trick
 //-------------------------------------------------------------------------------------------
 
+
+//-------------------------------------------------------------------------------------------
+namespace cv
+{
+//-------------------------------------------------------------------------------------------
+
+void write(cv::FileStorage &fs, const cv::String&, const std_msgs::ColorRGBA &x)
+{
+  #define PROC_VAR(v)  fs<<#v<<x.v;
+  fs<<"{";
+  PROC_VAR(r);
+  PROC_VAR(g);
+  PROC_VAR(b);
+  PROC_VAR(a);
+  fs<<"}";
+  #undef PROC_VAR
+}
+//-------------------------------------------------------------------------------------------
+void read(const cv::FileNode &data, std_msgs::ColorRGBA &x, const std_msgs::ColorRGBA &default_value)
+{
+  #define PROC_VAR(v)  if(!data[#v].empty())  data[#v]>>x.v;
+  PROC_VAR(r);
+  PROC_VAR(g);
+  PROC_VAR(b);
+  PROC_VAR(a);
+  #undef PROC_VAR
+}
+//-------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------
+}  // cv
+//-------------------------------------------------------------------------------------------
