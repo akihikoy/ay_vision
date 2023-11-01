@@ -24,14 +24,17 @@ namespace trick
   frame: Input image.
   frame_white: Detected white image.
   contours: Found contours.
-  v_min, s_max: Thresholds of V-minimum and S-maximum of HSV.
+  {h,s,v}_min, {h,s,v}_max: Thresholds of {h,s,v}-minimum and {h,s,v}-maximum of HSV.
   n_dilate, n_erode: dilate and erode filter parameters before detecting contours.
 */
-void FindWhiteContours(
+void FindWhiteContours2(
     const cv::Mat &frame,
     cv::Mat &frame_white,
     std::vector<std::vector<cv::Point> > &contours,
-    int v_min=100, int s_max=20, int n_dilate=1, int n_erode=1);
+    int h_min=0, int h_max=255,
+    int s_min=0, int s_max=20,
+    int v_min=100, int v_max=255,
+    int n_dilate=1, int n_erode=1);
 
 // Make a mask from biggest contour.
 void MakeBiggestContourMask(const std::vector<std::vector<cv::Point> > &contours,
@@ -42,14 +45,22 @@ void MakeBiggestContourMask(const std::vector<std::vector<cv::Point> > &contours
 struct TObjectDetectorParams
 {
   // For white detector:
-  int WhiteSMax;
+  int WhiteHMin;
+  int WhiteSMin;
   int WhiteVMin;
+  int WhiteHMax;
+  int WhiteSMax;
+  int WhiteVMax;
   int NErode1;
   int NDilate1;
 
   // For objects-on-white detector:
-  int ThreshS;
-  int ThreshV;
+  int ObjHMin;
+  int ObjSMin;
+  int ObjVMin;
+  int ObjHMax;
+  int ObjSMax;
+  int ObjVMax;
   int NErode20;
   int NErode2;
   int NDilate2;

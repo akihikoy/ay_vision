@@ -24,20 +24,21 @@ using namespace std;
   frame: Input image.
   frame_white: Detected white image.
   contours: Found contours.
-  v_min, s_max: Thresholds of V-minimum and S-maximum of HSV.
+  {h,s,v}_min, {h,s,v}_max: Thresholds of {h,s,v}-minimum and {h,s,v}-maximum of HSV.
   n_dilate, n_erode: dilate and erode filter parameters before detecting contours.
 */
-void FindWhiteContours(
+void FindWhiteContours2(
     const cv::Mat &frame,
     cv::Mat &frame_white,
     std::vector<std::vector<cv::Point> > &contours,
-    int v_min, int s_max, int n_dilate, int n_erode)
+    int h_min, int h_max, int s_min, int s_max, int v_min, int v_max,
+    int n_dilate, int n_erode)
 {
   cv::Mat frame_hsv;
 
   // White detection
   cv::cvtColor(frame, frame_hsv, cv::COLOR_BGR2HSV);
-  cv::inRange(frame_hsv, cv::Scalar(0, 0, v_min), cv::Scalar(255, s_max, 255), frame_white);
+  cv::inRange(frame_hsv, cv::Scalar(h_min, s_min, v_min), cv::Scalar(h_max, s_max, v_max), frame_white);
 
   if(n_dilate>0)  cv::dilate(frame_white,frame_white,cv::Mat(),cv::Point(-1,-1), n_dilate);
   if(n_erode>0)   cv::erode(frame_white,frame_white,cv::Mat(),cv::Point(-1,-1), n_erode);
@@ -72,14 +73,22 @@ void MakeBiggestContourMask(const std::vector<std::vector<cv::Point> > &contours
 TObjectDetectorParams::TObjectDetectorParams()
 {
   // For white detector:
-  WhiteSMax= 20;
+  WhiteHMin= 0;
+  WhiteSMin= 0;
   WhiteVMin= 100;
+  WhiteHMax= 255;
+  WhiteSMax= 20;
+  WhiteVMax= 255;
   NErode1= 1;
   NDilate1= 1;
 
   // For objects-on-white detector:
-  ThreshS= 30;
-  ThreshV= 224;
+  ObjHMin= 0;
+  ObjSMin= 30;
+  ObjVMin= 0;
+  ObjHMax= 255;
+  ObjSMax= 255;
+  ObjVMax= 224;
   NErode20= 0;
   NErode2= 1;
   NDilate2= 2;
@@ -99,12 +108,20 @@ void WriteToYAML(const std::vector<TObjectDetectorParams> &params, const std::st
   {
     fs<<"{";
     #define PROC_VAR(x)  fs<<#x<<itr->x;
-    PROC_VAR(WhiteSMax  );
+    PROC_VAR(WhiteHMin  );
+    PROC_VAR(WhiteSMin  );
     PROC_VAR(WhiteVMin  );
+    PROC_VAR(WhiteHMax  );
+    PROC_VAR(WhiteSMax  );
+    PROC_VAR(WhiteVMax  );
     PROC_VAR(NErode1    );
     PROC_VAR(NDilate1   );
-    PROC_VAR(ThreshS    );
-    PROC_VAR(ThreshV    );
+    PROC_VAR(ObjHMin    );
+    PROC_VAR(ObjSMin    );
+    PROC_VAR(ObjVMin    );
+    PROC_VAR(ObjHMax    );
+    PROC_VAR(ObjSMax    );
+    PROC_VAR(ObjVMax    );
     PROC_VAR(NErode20   );
     PROC_VAR(NErode2    );
     PROC_VAR(NDilate2   );
@@ -130,12 +147,20 @@ void ReadFromYAML(std::vector<TObjectDetectorParams> &params, const std::string 
   {
     TObjectDetectorParams cf;
     #define PROC_VAR(x)  if(!(*itr)[#x].empty())  (*itr)[#x]>>cf.x;
-    PROC_VAR(WhiteSMax  );
+    PROC_VAR(WhiteHMin  );
+    PROC_VAR(WhiteSMin  );
     PROC_VAR(WhiteVMin  );
+    PROC_VAR(WhiteHMax  );
+    PROC_VAR(WhiteSMax  );
+    PROC_VAR(WhiteVMax  );
     PROC_VAR(NErode1    );
     PROC_VAR(NDilate1   );
-    PROC_VAR(ThreshS    );
-    PROC_VAR(ThreshV    );
+    PROC_VAR(ObjHMin    );
+    PROC_VAR(ObjSMin    );
+    PROC_VAR(ObjVMin    );
+    PROC_VAR(ObjHMax    );
+    PROC_VAR(ObjSMax    );
+    PROC_VAR(ObjVMax    );
     PROC_VAR(NErode20   );
     PROC_VAR(NErode2    );
     PROC_VAR(NDilate2   );
@@ -165,8 +190,10 @@ void TObjectDetector::Step(const cv::Mat &frame)
 {
   cv::Mat mask_white;
   std::vector<std::vector<cv::Point> > contours_w;
-  FindWhiteContours(frame, mask_white, contours_w,
-        /*v_min=*/params_.WhiteVMin, /*s_max=*/params_.WhiteSMax,
+  FindWhiteContours2(frame, mask_white, contours_w,
+        params_.WhiteHMin, params_.WhiteHMax,
+        params_.WhiteSMin, params_.WhiteSMax,
+        params_.WhiteVMin, params_.WhiteVMax,
         /*n_dilate=*/params_.NDilate1, /*n_erode=*/params_.NErode1);
 
   // Make a mask of biggest contour:
@@ -180,8 +207,8 @@ void TObjectDetector::Step(const cv::Mat &frame)
 
   // Non-white detection
   cv::cvtColor(frame_white, frame_white_hsv, cv::COLOR_BGR2HSV);
-  cv::inRange(frame_white_hsv, cv::Scalar(0, params_.ThreshS, 0),
-              cv::Scalar(255, 255, params_.ThreshV), mask_objects_);
+  cv::inRange(frame_white_hsv, cv::Scalar(params_.ObjHMin, params_.ObjSMin, params_.ObjVMin),
+              cv::Scalar(params_.ObjHMax, params_.ObjSMax, params_.ObjVMax), mask_objects_);
   mask_objects_.setTo(0, 1-mask_white_biggest_);
 
   cv::erode(mask_objects_,mask_objects_,cv::Mat(),cv::Point(-1,-1), params_.NErode20);

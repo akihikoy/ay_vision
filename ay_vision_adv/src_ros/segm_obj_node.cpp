@@ -89,8 +89,8 @@ bool HandleKeyEvent()
       cv::createTrackbar("n_erode1", "segmented", &ObjDetector.Params().NErode1, 10, NULL);
 
       // For objects-on-white detector
-      cv::createTrackbar("thresh_s", "segmented", &ObjDetector.Params().ThreshS, 255, NULL);
-      cv::createTrackbar("thresh_v", "segmented", &ObjDetector.Params().ThreshV, 255, NULL);
+      cv::createTrackbar("obj_s_min", "segmented", &ObjDetector.Params().ObjSMin, 255, NULL);
+      cv::createTrackbar("obj_v_max", "segmented", &ObjDetector.Params().ObjVMax, 255, NULL);
       cv::createTrackbar("n_dilate2", "segmented", &ObjDetector.Params().NDilate2, 10, NULL);
       cv::createTrackbar("n_erode2", "segmented", &ObjDetector.Params().NErode2, 10, NULL);
       cv::createTrackbar("rect_len_min", "segmented", &ObjDetector.Params().RectLenMin, 600, NULL);
