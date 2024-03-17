@@ -31,7 +31,8 @@ public:
       gaussian_kernel_size_  (7,7),
       gaussian_sigma_x_      (2.5),
       gaussian_sigma_y_      (2.5),
-      dilations_erosions_    (2),
+      dilations_             (2),
+      erosions_              (2),
       lookup_table_          (256, 1, CV_8UC3)
     {
       lookup_table_= cv::Scalar(0,0,0);
@@ -42,7 +43,8 @@ public:
       gaussian_kernel_size_  (src.gaussian_kernel_size_ ),
       gaussian_sigma_x_      (src.gaussian_sigma_x_     ),
       gaussian_sigma_y_      (src.gaussian_sigma_y_     ),
-      dilations_erosions_    (src.dilations_erosions_   ),
+      dilations_             (src.dilations_            ),
+      erosions_              (src.erosions_             ),
       lookup_table_          (256, 1, CV_8UC3)
     {
       src.lookup_table_.copyTo(lookup_table_);
@@ -64,14 +66,17 @@ public:
   const cv::Size& GaussianKernelSize() const {return gaussian_kernel_size_;}
   const double& GaussianSigmaX() const {return gaussian_sigma_x_;}
   const double& GaussianSigmaY() const {return gaussian_sigma_y_;}
-  int DilationsErosions() const {return dilations_erosions_;}
+  int DilationSize() const {return dilations_;}
+  int ErosionSize() const {return erosions_;}
 
   void SetColorCode(int v)  {color_code_= v;}
   void SetUsingBlur(bool v)  {using_blur_= v;}
   void SetGaussianKernelSize(const cv::Size &v)  {gaussian_kernel_size_= v;}
-  void SetGaussianSigmaY(const double &v)  {gaussian_sigma_y_= v;}
   void SetGaussianSigmaX(const double &v)  {gaussian_sigma_x_= v;}
-  void SetDilationsErosions(int v)  {dilations_erosions_= v;}
+  void SetGaussianSigmaY(const double &v)  {gaussian_sigma_y_= v;}
+  void SetDilationSize(int v)  {dilations_= v;}
+  void SetErosionSize(int v)  {erosions_= v;}
+  void SetDilationsErosions(int v)  {dilations_= v; erosions_= v;}
 
 protected:
 
@@ -87,8 +92,10 @@ protected:
   double gaussian_sigma_x_;
   //! Y-std dev of the Gaussian blur.
   double gaussian_sigma_y_;
-  //! Size of dilations/erosions.
-  int dilations_erosions_;
+  //! Size of dilation.
+  int dilations_;
+  //! Size of erosion.
+  int erosions_;
 
 
   cv::Mat lookup_table_;

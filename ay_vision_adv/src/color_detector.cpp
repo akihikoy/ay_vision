@@ -86,10 +86,13 @@ cv::Mat TColorDetector::Detect(const cv::Mat &src_img) const
   if(using_blur_)
   {
     GaussianBlur(src_img, color_img, gaussian_kernel_size_, gaussian_sigma_x_, gaussian_sigma_y_);
-    cv::cvtColor(color_img, color_img, color_code_);  // Color conversion with code
+    if(color_code_>=0)
+      cv::cvtColor(color_img, color_img, color_code_);  // Color conversion with code
   }
-  else
+  else if(color_code_>=0)
     cv::cvtColor(src_img, color_img, color_code_);  // Color conversion with code
+  else
+    src_img.copyTo(color_img);
 
   // Apply the lookup table (for each channel, the image is binarized)
   cv::LUT(color_img, lookup_table_, color_img);
@@ -102,11 +105,8 @@ cv::Mat TColorDetector::Detect(const cv::Mat &src_img) const
   cv::bitwise_and(ch_imgs[0], ch_imgs[1], mask_img);
   cv::bitwise_and(mask_img, ch_imgs[2], mask_img);
 
-  if(dilations_erosions_>0)
-  {
-    cv::dilate(mask_img,mask_img,cv::Mat(),cv::Point(-1,-1), dilations_erosions_);
-    cv::erode(mask_img,mask_img,cv::Mat(),cv::Point(-1,-1), dilations_erosions_);
-  }
+  if(dilations_>0)  cv::dilate(mask_img,mask_img,cv::Mat(),cv::Point(-1,-1), dilations_);
+  if(erosions_>0)  cv::erode(mask_img,mask_img,cv::Mat(),cv::Point(-1,-1), erosions_);
 
   return mask_img;
 }
