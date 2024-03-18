@@ -244,15 +244,16 @@ void TObjectDetector::Step(const cv::Mat &frame)
 void TObjectDetector::Draw(cv::Mat &frame)
 {
   cv::Mat &img_disp(frame);
-  cv::Mat mask_objectss[3]= {128.0*mask_white_biggest_,128.0*mask_white_biggest_,128.0*mask_white_biggest_+128.0*mask_objects_}, mask_objectsc;
+  cv::Mat mask_objectss[3]= {25.0*mask_white_biggest_,25.0*mask_white_biggest_,25.0*mask_white_biggest_+0.2*mask_objects_}, mask_objectsc;
   cv::merge(mask_objectss,3,mask_objectsc);
   img_disp+= mask_objectsc;
+  cv::add(img_disp, 0.4*img_disp, img_disp, mask_objects_);
 
   if(contours_obj_.size()>0)
   {
     for(int ic(0),ic_end(contours_obj_.size()); ic<ic_end; ++ic)
     {
-      cv::drawContours(img_disp, contours_obj_, ic, CV_RGB(255,0,255), /*thickness=*/2, /*linetype=*/8);
+      cv::drawContours(img_disp, contours_obj_, ic, CV_RGB(255,0,255), /*thickness=*/1.5, /*linetype=*/8);
       // cv::Rect bound= cv::boundingRect(contours_obj_[ic]);
       // cv::rectangle(img_disp, bound, cv::Scalar(0,0,255), 2);
     }
