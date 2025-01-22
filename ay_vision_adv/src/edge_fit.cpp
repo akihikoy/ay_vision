@@ -141,7 +141,7 @@ void DrawPoints(cv::Mat &img, const cv::Mat &points, const cv::Mat &grads)
 void DetectEdges(const cv::Mat &frame, cv::Mat &edges_x, cv::Mat &edges_y, const TEdgeDetectParams &params)
 {
   cv::Mat frame_gray;
-  cv::cvtColor(frame, frame_gray, CV_BGR2GRAY);
+  cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
   cv::blur(frame_gray, frame_gray, cv::Size(params.PreBlurSize,params.PreBlurSize));
   int scale(1), delta(0), ddepth(CV_16S);
   // Gradient X

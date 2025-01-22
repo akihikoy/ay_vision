@@ -21,7 +21,7 @@ int main(int argc, char**argv)
 {
   ros::init(argc, argv, "disp_rostime");
   ros::NodeHandle node("~");
-  cv::namedWindow("time", CV_WINDOW_AUTOSIZE);
+  cv::namedWindow("time", cv::WINDOW_AUTOSIZE);
   cv::Mat frame(cv::Size(320,50),CV_8UC3);
   while(ros::ok())
   {
@@ -29,7 +29,7 @@ int main(int argc, char**argv)
     std::stringstream ss;
     ss<<std::setprecision(14)<<time;
     frame.setTo(0);
-    cv::putText(frame, ss.str(), cv::Point(10,35), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0,255,0), 1, CV_AA);
+    cv::putText(frame, ss.str(), cv::Point(10,35), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0,255,0), 1, cv::LINE_AA);
     cv::imshow("time", frame);
     char c(cv::waitKey(100));
     if(c=='\x1b'||c=='q') break;

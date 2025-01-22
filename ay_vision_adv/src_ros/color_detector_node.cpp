@@ -175,7 +175,7 @@ void DrawExternalViz(cv::Mat &disp_img)
   for(std::vector<ay_vision_msgs::ColDetVizPrimitive>::const_iterator itr(VizObjs.begin()),itr_end(VizObjs.end());
       itr!=itr_end; ++itr)
   {
-    cv::Scalar col= CV_RGB(itr->color.r,itr->color.g,itr->color.b);
+    cv::Scalar col= cv::Scalar(itr->color.r,itr->color.g,itr->color.b);
     const double &lw= itr->line_width;
     switch(itr->type)
     {
@@ -285,8 +285,8 @@ int main(int argc, char**argv)
   }
   std::cerr<<"Camera opened"<<std::endl;
 
-  cap.set(CV_CAP_PROP_FRAME_WIDTH, cap_width);
-  cap.set(CV_CAP_PROP_FRAME_HEIGHT, cap_height);
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, cap_width);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, cap_height);
 
   VideoOut.SetfilePrefix(vout_base);
 
@@ -388,7 +388,7 @@ int main(int argc, char**argv)
       {
         ColDetector.Draw(disp_img);
         if(CDIdx>=0)
-          cv::rectangle(disp_img, ColDetector.Bound(CDIdx), CV_RGB(0,255,0), 2);
+          cv::rectangle(disp_img, ColDetector.Bound(CDIdx), cv::Scalar(0,255,0), 2);
       }
 
       // For flow mask:
@@ -413,14 +413,14 @@ int main(int argc, char**argv)
       if(FlowMaskMode==1)  {}
       else if(FlowMaskMode==2)  MaskFlow(FlowFinder, flow_mask_img);
       if(VizMode!=0)
-        FlowFinder.DrawFlow(disp_img, CV_RGB(0,255,255), /*len=*/1.0, /*thickness=*/3);
+        FlowFinder.DrawFlow(disp_img, cv::Scalar(0,255,255), /*len=*/1.0, /*thickness=*/3);
 
       // Compute average flow
       cv::Vec2d avr_xy(0.0,0.0), avr_vel(0.0,0.0), avr_spddir(0.0,0.0);
       CalcFlowAverage(FlowFinder, avr_xy, avr_vel, avr_spddir);
 
       if(VizMode!=0 && avr_spddir[0]>20.0)
-        cv::line(disp_img, cv::Point2d(avr_xy-0.5*avr_vel), cv::Point2d(avr_xy+0.5*avr_vel), CV_RGB(255,128,0), 5);
+        cv::line(disp_img, cv::Point2d(avr_xy-0.5*avr_vel), cv::Point2d(avr_xy+0.5*avr_vel), cv::Scalar(255,128,0), 5);
 
       if(VizMode!=0)
         DrawExternalViz(disp_img);

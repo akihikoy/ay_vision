@@ -21,7 +21,7 @@ void DrawColDetViz(cv::Mat &img, const std::vector<ay_vision_msgs::ColDetVizPrim
   for(std::vector<ay_vision_msgs::ColDetVizPrimitive>::const_iterator itr(objects.begin()),itr_end(objects.end());
       itr!=itr_end; ++itr)
   {
-    cv::Scalar col= CV_RGB(itr->color.r,itr->color.g,itr->color.b);
+    cv::Scalar col= cv::Scalar(itr->color.r,itr->color.g,itr->color.b);
     const double &lw= itr->line_width;
     std::vector<std::vector<cv::Point> >  points(1);
     cv::Mat mask;

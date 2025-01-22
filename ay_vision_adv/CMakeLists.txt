@@ -19,7 +19,10 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 ## System dependencies are found with CMake's conventions
-find_package(OpenCV 3 REQUIRED)
+find_package(OpenCV 4 QUIET)
+if(NOT OpenCV_FOUND)
+  find_package(OpenCV 3 REQUIRED)
+endif()
 message("OpenCV_INCLUDE_DIRS: ${OpenCV_INCLUDE_DIRS}")
 message("OpenCV_LIBRARIES: ${OpenCV_LIBRARIES}")
 
@@ -101,7 +104,7 @@ add_library(ayv_rt_pose_estimator
 # add_executable(${PROJECT_NAME}_color_detector_node
 #   src_ros/color_detector_node.cpp
 # )
-# add_dependencies(ayv_viz_util
+# add_dependencies(${PROJECT_NAME}_color_detector_node
 #   ${ay_vision_msgs_EXPORTED_TARGETS}
 # )
 # set_target_properties(${PROJECT_NAME}_color_detector_node PROPERTIES OUTPUT_NAME color_detector_node PREFIX "")
@@ -137,7 +140,7 @@ target_link_libraries(${PROJECT_NAME}_disp_rostime
 add_executable(${PROJECT_NAME}_segm_obj_node
   src_ros/segm_obj_node.cpp
 )
-add_dependencies(ayv_viz_util
+add_dependencies(${PROJECT_NAME}_segm_obj_node
   ${ay_vision_msgs_EXPORTED_TARGETS}
 )
 set_target_properties(${PROJECT_NAME}_segm_obj_node PROPERTIES OUTPUT_NAME segm_obj_node PREFIX "")
@@ -152,7 +155,7 @@ target_link_libraries(${PROJECT_NAME}_segm_obj_node
 add_executable(${PROJECT_NAME}_record_video_node
   src_ros/record_video_node.cpp
 )
-add_dependencies(ayv_viz_util
+add_dependencies(${PROJECT_NAME}_record_video_node
   ${ay_vision_msgs_EXPORTED_TARGETS}
 )
 set_target_properties(${PROJECT_NAME}_record_video_node PROPERTIES OUTPUT_NAME record_video_node PREFIX "")

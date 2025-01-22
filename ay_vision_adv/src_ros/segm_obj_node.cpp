@@ -249,8 +249,8 @@ int main(int argc, char**argv)
   ReadFromYAML(segm_obj_info, pkg_dir+"/"+segm_obj_config);
   if(segm_obj_info.size()>0)  ObjDetector.Params()= segm_obj_info[0];
 
-  // cv::namedWindow("camera", CV_WINDOW_AUTOSIZE);
-  cv::namedWindow("segmented", CV_WINDOW_AUTOSIZE);
+  // cv::namedWindow("camera", cv::WINDOW_AUTOSIZE);
+  cv::namedWindow("segmented", cv::WINDOW_AUTOSIZE);
   cv::setMouseCallback("segmented", OnMouse, NULL);
 
   ObjDetector.Init();

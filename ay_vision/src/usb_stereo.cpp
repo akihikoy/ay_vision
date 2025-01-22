@@ -205,7 +205,7 @@ void TStereo::RectifyL(cv::Mat &frame1, bool gray_scale)
     cv::Mat gray1;
     if(frame1.channels()==3)
     {
-      cv::cvtColor(frame1, gray1, CV_BGR2GRAY);
+      cv::cvtColor(frame1, gray1, cv::COLOR_BGR2GRAY);
       frame1= gray1;
     }
   }
@@ -224,7 +224,7 @@ void TStereo::RectifyR(cv::Mat &frame2, bool gray_scale)
     cv::Mat gray2;
     if(frame2.channels()==3)
     {
-      cv::cvtColor(frame2, gray2, CV_BGR2GRAY);
+      cv::cvtColor(frame2, gray2, cv::COLOR_BGR2GRAY);
       frame2= gray2;
     }
   }

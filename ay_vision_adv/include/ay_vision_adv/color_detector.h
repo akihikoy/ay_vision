@@ -10,7 +10,7 @@
 #define color_detector_h
 //-------------------------------------------------------------------------------------------
 #include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>  // CV_BGR2HSV
+#include <opencv2/imgproc/imgproc.hpp>  // cv::COLOR_BGR2HSV
 #include <vector>
 #include <list>
 //-------------------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ class TColorDetector
 {
 public:
   TColorDetector()
-    : color_code_            (CV_BGR2HSV),
+    : color_code_            (cv::COLOR_BGR2HSV),
       using_blur_            (true),
       gaussian_kernel_size_  (7,7),
       gaussian_sigma_x_      (2.5),
@@ -82,7 +82,7 @@ protected:
 
   // Parameters
 
-  //! Color conversion code where the colors are detected, like CV_BGR2HSV, CV_BGR2Lab.
+  //! Color conversion code where the colors are detected, like cv::COLOR_BGR2HSV, cv::COLOR_BGR2Lab.
   int color_code_;
   //! If true, the Gaussian blur is applied to the input image.
   bool using_blur_;

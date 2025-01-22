@@ -50,7 +50,7 @@ TFlowFinder::TFlowFinder()
 void TFlowFinder::Update(const cv::Mat &frame)
 {
   if(frame.channels()==3)
-    cv::cvtColor(frame,frame_,CV_BGR2GRAY);
+    cv::cvtColor(frame,frame_,cv::COLOR_BGR2GRAY);
   else
     frame.convertTo(frame_,CV_8UC1);
 
@@ -121,7 +121,7 @@ void TFlowFinder::UpdateProc2_ContourAnalysis(const cv::Mat &mask)
   flow_elmts_.clear();
   contours_.clear();
   cv::Mat mask2= mask.clone();
-  cv::findContours(mask2,contours_,CV_RETR_EXTERNAL,CV_CHAIN_APPROX_SIMPLE);
+  cv::findContours(mask2,contours_,cv::RETR_EXTERNAL,cv::CHAIN_APPROX_SIMPLE);
   for(int i(0); i<contours_.size(); ++i)
   {
     double avr_angle(0.0), avr_spd(0.0);
@@ -218,7 +218,7 @@ void TFlowFinder::DrawFlow(cv::Mat &frame, const cv::Scalar &color, const double
       // Draw flow:
       cv::Point2d center(itr->X, itr->Y);
       cv::Point2d vel(itr->VX, itr->VY);
-      cv::line(frame, center, center+len*vel, color, thickness, /*line_type=*/CV_AA, 0);
+      cv::line(frame, center, center+len*vel, color, thickness, /*line_type=*/cv::LINE_AA, 0);
     }
   }
   else if(proc_type_==1)
@@ -246,7 +246,7 @@ void TFlowFinder::CalcOpticalFlow(const cv::Mat &prev, const cv::Mat &curr)
   CvMat prev2(prev), curr2(curr), velx2(velx_), vely2(vely_);
 
   // Using HS:
-  // CvTermCriteria criteria= cvTermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 64, 0.01);
+  // CvTermCriteria criteria= cvTermCriteria(cv::TERMCRIT_ITER | cv::TERMCRIT_EPS, 64, 0.01);
   // cvCalcOpticalFlowHS(&prev2, &curr2, 0, &velx2, &vely2, 100.0, criteria);
   // Using LK:
   cvCalcOpticalFlowLK(&prev2, &curr2, optflow_win_size_, &velx2, &vely2);

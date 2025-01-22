@@ -44,7 +44,7 @@ void FindWhiteContours2(
   if(n_erode>0)   cv::erode(frame_white,frame_white,cv::Mat(),cv::Point(-1,-1), n_erode);
 
   // Contour detection
-  cv::findContours(frame_white, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+  cv::findContours(frame_white, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 }
 //-------------------------------------------------------------------------------------------
 
@@ -217,7 +217,7 @@ void TObjectDetector::Step(const cv::Mat &frame)
 
   // Find object contours
   std::vector<std::vector<cv::Point> > contours;
-  cv::findContours(mask_objects_, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+  cv::findContours(mask_objects_, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
   // Apply filters to object contours
   contours_obj_.clear();
@@ -253,7 +253,7 @@ void TObjectDetector::Draw(cv::Mat &frame)
   {
     for(int ic(0),ic_end(contours_obj_.size()); ic<ic_end; ++ic)
     {
-      cv::drawContours(img_disp, contours_obj_, ic, CV_RGB(255,0,255), /*thickness=*/1.5, /*linetype=*/8);
+      cv::drawContours(img_disp, contours_obj_, ic, cv::Scalar(255,0,255), /*thickness=*/1.5, /*linetype=*/8);
       // cv::Rect bound= cv::boundingRect(contours_obj_[ic]);
       // cv::rectangle(img_disp, bound, cv::Scalar(0,0,255), 2);
     }

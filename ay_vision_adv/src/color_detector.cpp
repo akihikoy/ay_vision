@@ -163,7 +163,7 @@ void TMultipleColorDetector::Detect(const cv::Mat &frame, int mode, bool verbose
     mask_imgs_[i].copyTo(tmp_mask);
     // FindLargestContour(tmp_mask, &area, &center, &bound);
     {
-      cv::findContours(tmp_mask,contours,CV_RETR_EXTERNAL,CV_CHAIN_APPROX_SIMPLE);
+      cv::findContours(tmp_mask,contours,cv::RETR_EXTERNAL,cv::CHAIN_APPROX_SIMPLE);
       int n_blocks= 0;
       if(contours.size()>0)
       {

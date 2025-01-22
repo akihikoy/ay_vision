@@ -95,7 +95,7 @@ bool FindLargestContour(const cv::Mat &bin_src,
     std::vector<cv::Point> *contour)
 {
   std::vector<std::vector<cv::Point> > contours;
-  cv::findContours(bin_src,contours,CV_RETR_EXTERNAL,CV_CHAIN_APPROX_SIMPLE);
+  cv::findContours(bin_src,contours,cv::RETR_EXTERNAL,cv::CHAIN_APPROX_SIMPLE);
   if(contours.size()==0)  return false;
   double a(0.0),a_max(0.0), i_max(0);
   for(int i(0),i_end(contours.size()); i<i_end; ++i)
@@ -330,9 +330,9 @@ void DrawCrossOnCenter(cv::Mat &img, int size, const cv::Scalar &col, int thickn
 
 bool OpenVideoOut(cv::VideoWriter &vout, const char *file_name, int fps, const cv::Size &size)
 {
-  // int codec= CV_FOURCC('P','I','M','1');  // mpeg1video
-  // int codec= CV_FOURCC('X','2','6','4');  // x264?
-  int codec= CV_FOURCC('m','p','4','v');  // mpeg4 (Simple Profile)
+  // int codec= cv::VideoWriter::fourcc('P','I','M','1');  // mpeg1video
+  // int codec= cv::VideoWriter::fourcc('X','2','6','4');  // x264?
+  int codec= cv::VideoWriter::fourcc('m','p','4','v');  // mpeg4 (Simple Profile)
   vout.open(file_name, codec, fps, size, true);
 
   if (!vout.isOpened())
@@ -534,12 +534,12 @@ bool CapOpen(TCameraInfo &info, cv::VideoCapture &cap)
     std::cerr<<"Failed to open camera: "<<info.DevID<<std::endl;
     return false;
   }
-  if(fourcc.size()>0)  cap.set(CV_CAP_PROP_FOURCC,CV_FOURCC(fourcc[0],fourcc[1],fourcc[2],fourcc[3]));
+  if(fourcc.size()>0)  cap.set(cv::CAP_PROP_FOURCC,cv::VideoWriter::fourcc(fourcc[0],fourcc[1],fourcc[2],fourcc[3]));
   if(info.CapWidth==0)  info.CapWidth= info.Width;
   if(info.CapHeight==0)  info.CapHeight= info.Height;
-  if(info.CapWidth>0)  cap.set(CV_CAP_PROP_FRAME_WIDTH, info.CapWidth);
-  if(info.CapHeight>0)  cap.set(CV_CAP_PROP_FRAME_HEIGHT, info.CapHeight);
-  if(info.FPS>0)  cap.set(CV_CAP_PROP_FPS, info.FPS);
+  if(info.CapWidth>0)  cap.set(cv::CAP_PROP_FRAME_WIDTH, info.CapWidth);
+  if(info.CapHeight>0)  cap.set(cv::CAP_PROP_FRAME_HEIGHT, info.CapHeight);
+  if(info.FPS>0)  cap.set(cv::CAP_PROP_FPS, info.FPS);
   return true;
 }
 //-------------------------------------------------------------------------------------------
