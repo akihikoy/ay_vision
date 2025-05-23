@@ -154,6 +154,22 @@ inline cv::Mat ColorMask(cv::Mat mask, const cv::Scalar &col)
 //-------------------------------------------------------------------------------------------
 
 
+
+// Suppress an exception when window_name windows does not exist in cv::destroyWindow.
+inline bool SafeDestroyWindow(const std::string& window_name)
+{
+  try {
+    std::cerr<<"Destroying: Window "<<window_name<<"..."<<std::endl;
+    cv::destroyWindow(window_name);
+    return true;
+  } catch (const cv::Exception& e) {
+    std::cerr<<"Warning: Window "<<window_name<<" does not exist."<<std::endl;
+    return false;
+  }
+}
+//-------------------------------------------------------------------------------------------
+
+
 //-------------------------------------------------------------------------------------------
 // 3D camera geometry utility.
 //-------------------------------------------------------------------------------------------
