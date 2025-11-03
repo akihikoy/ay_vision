@@ -11,6 +11,8 @@
 //-------------------------------------------------------------------------------------------
 #include <cstring>
 #include <ros/ros.h>
+#include <std_msgs/Header.h>
+#include <sensor_msgs/Image.h>
 //-------------------------------------------------------------------------------------------
 namespace trick
 {
@@ -23,6 +25,16 @@ std::string GetImageEncoding(const std::string &img_topic, ros::NodeHandle &node
 
 // Get camera projection matrix from ros topic.
 void GetCameraProjectionMatrix(const std::string &cam_info_topic, std::string &frame_id, cv::Mat &proj_mat);
+//-------------------------------------------------------------------------------------------
+
+struct TConvertImageMsgRes
+{
+  std_msgs::Header Header;
+  cv::Mat Frame;
+};
+
+// Convert Image message of encoding to an OpenCV Mat.
+TConvertImageMsgRes ConvertImageMsg(const sensor_msgs::ImageConstPtr& msg, const std::string &encoding);
 //-------------------------------------------------------------------------------------------
 
 

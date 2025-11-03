@@ -63,6 +63,26 @@ void GetCameraProjectionMatrix(const std::string &cam_info_topic, std::string &f
 }
 //-------------------------------------------------------------------------------------------
 
+// Convert Image message of encoding to an OpenCV Mat.
+TConvertImageMsgRes ConvertImageMsg(const sensor_msgs::ImageConstPtr& msg, const std::string &encoding)
+{
+  TConvertImageMsgRes res;
+  res.Header= msg->header;
+  cv_bridge::CvImagePtr cv_ptr;
+  try
+  {
+    cv_ptr = cv_bridge::toCvCopy(msg, encoding);
+  }
+  catch (cv_bridge::Exception& e)
+  {
+    ROS_ERROR("cv_bridge exception: %s", e.what());
+    return res;
+  }
+  res.Frame= cv_ptr->image;
+  return res;
+}
+//-------------------------------------------------------------------------------------------
+
 
 //-------------------------------------------------------------------------------------------
 }  // end of trick
